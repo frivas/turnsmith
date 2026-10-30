@@ -23,10 +23,20 @@ failure, option validation, aliases, batches, ANSI/plain equivalence, and native
 executable tests pass. Real macOS PTY auto-color and NO_COLOR were checked.
 The README includes a visually checked solved reference SVG, also packaged in
 release archives. Seed domain, generator algorithm, and original golden vectors
-are unchanged. The additive feature is being shipped as v0.2.0; check the tag
-workflow and release page for final publication/validation state.
+are unchanged. The additive feature is published as
+[v0.2.0](https://github.com/frivas/turnsmith/releases/tag/v0.2.0), source
+`14aee572e02cf1d9968c4728d44835bdf286935b`.
+[Native CI](https://github.com/frivas/turnsmith/actions/runs/41111178133) and the
+[actual release pipeline](https://github.com/frivas/turnsmith/actions/runs/41111430654)
+passed. All six published archives were downloaded and checked for hashes,
+OS/CPU headers, contents, SVG and changelog inclusion, and permissions. The
+packaged macOS ARM64 binary was run to verify version, source commit, colored/plain
+step equivalence, four diagrams for `L2 D' U`, and unchanged seed-42 output.
+The actual public Go install also passed. The user's `~/.local/bin/turnsmith`
+is updated to the verified published v0.2.0 Mac binary. No required feature
+work remains pending for this request.
 
-## Current continuation status
+## First-release continuation record
 
 Public repository: [frivas/turnsmith](https://github.com/frivas/turnsmith).
 The repository was created as `frivas`, and the active GitHub CLI account was
