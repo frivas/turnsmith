@@ -18,6 +18,8 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/frivas/turnsmith/internal/release"
 )
 
 func main() {
@@ -31,12 +33,17 @@ func run() error {
 	commit := flag.String("commit", "unknown", "Git commit or unknown")
 	date := flag.String("date", "", "RFC3339 build date; defaults to current UTC time")
 	out := flag.String("out", "dist", "output directory")
+	checkVersion := flag.Bool("check-version", false, "validate the version without building")
+	changelog := flag.Bool("changelog", false, "generate and package the Git changelog")
 	flag.Parse()
 	if flag.NArg() != 0 {
 		return fmt.Errorf("unexpected positional arguments")
 	}
-	if !regexp.MustCompile(`^0\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$`).MatchString(*version) {
-		return fmt.Errorf("expected a v0 semantic version without leading v")
+	if err := release.ValidateVersion(*version); err != nil {
+		return err
+	}
+	if *checkVersion {
+		return nil
 	}
 	if *commit != "unknown" && !regexp.MustCompile(`^[0-9a-f]{7,64}$`).MatchString(*commit) {
 		return fmt.Errorf("invalid commit")
@@ -55,6 +62,17 @@ func run() error {
 	}
 	if err := os.MkdirAll(*out, 0755); err != nil {
 		return err
+	}
+	changelogPath := ""
+	if *changelog {
+		notes, err := release.Changelog(".", *version, *commit)
+		if err != nil {
+			return fmt.Errorf("changelog: %w", err)
+		}
+		changelogPath = filepath.Join(*out, "CHANGELOG.md")
+		if err := os.WriteFile(changelogPath, []byte(notes), 0644); err != nil {
+			return err
+		}
 	}
 	temp, err := os.MkdirTemp("", "turnsmith-release-")
 	if err != nil {
@@ -81,7 +99,7 @@ func run() error {
 			}
 			name := fmt.Sprintf("turnsmith_%s_%s_%s%s", *version, goos, arch, extension)
 			path := filepath.Join(*out, name)
-			if err := archive(path, executable, binary, timestamp, goos == "windows"); err != nil {
+			if err := archive(path, executable, binary, changelogPath, timestamp, goos == "windows"); err != nil {
 				return fmt.Errorf("archive %s: %w", name, err)
 			}
 			data, err := os.ReadFile(path)
@@ -94,7 +112,7 @@ func run() error {
 	}
 	return os.WriteFile(filepath.Join(*out, "SHA256SUMS"), []byte(sums.String()), 0644)
 }
-func archive(path, executable, binary string, timestamp time.Time, windows bool) (err error) {
+func archive(path, executable, binary, changelog string, timestamp time.Time, windows bool) (err error) {
 	file, err := os.Create(path)
 	if err != nil {
 		return err
@@ -109,6 +127,9 @@ func archive(path, executable, binary string, timestamp time.Time, windows bool)
 		mode       int64
 	}
 	assets := []asset{{executable, binary, 0755}, {"README.md", "README.md", 0644}, {"LICENSE", "LICENSE", 0644}, {"THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md", 0644}}
+	if changelog != "" {
+		assets = append(assets, asset{"CHANGELOG.md", changelog, 0644})
+	}
 	if windows {
 		writer := zip.NewWriter(file)
 		defer func() {

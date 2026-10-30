@@ -17,7 +17,8 @@ not establish that an unavailable review has been implemented.
 | Native CI and final release archives | Partially verified. Local checks and six-target packaging pass; final candidate evidence remains gated by the selected release policy. |
 | Signing, notarization, build provenance, and immutable releases | Researched, not implemented or enabled. Await the [release-policy decision](https://github.com/frivas/turnsmith/issues/5). Current archives have checksums. |
 | Homebrew tap/formula | Not created. Inclusion or deferral requires the release-policy decision. |
-| Tagging and publishing v0.1.0 | Not done. Requires the maintainer's [release-readiness decision](https://github.com/frivas/turnsmith/issues/7). |
+| SemVer tags, changelogs, and multi-platform release automation | Implemented. A valid pushed tag runs CI and automatically publishes six archives, checksums, and a Git-history changelog. Manual previews never publish. |
+| Actual v0.1.0 publication | No tag or release created yet. The maintainer selects the candidate and pushes its tag; automatic publication after passing checks was explicitly selected. |
 
 The [release map](https://github.com/frivas/turnsmith/issues/1) remains the canonical
 index. Closed ticket resolutions contain decision detail and immutable evidence

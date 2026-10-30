@@ -1,5 +1,7 @@
 .PHONY: build test check fmt bench release
 
+VERSION ?= 0.1.0-dev
+
 build:
 	go build -trimpath -o bin/turnsmith ./cmd/turnsmith
 
@@ -19,4 +21,4 @@ bench:
 	go test ./internal/app -run '^$$' -bench . -benchmem
 
 release:
-	go run ./scripts/release.go --version 0.1.0
+	go run ./scripts/release.go --version $(VERSION) --changelog

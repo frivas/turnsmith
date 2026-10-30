@@ -64,6 +64,7 @@ is needed to produce legal outer-face sequences.
   Embedded Go module/VCS metadata fills available defaults once at startup.
   The resolved values are local and shared by version output and JSON metadata;
   generation and CLI execution never mutate the linker variables.
-- A small Go developer tool builds all six archives. It is excluded from normal
-  package builds and the product executable; no release tooling is a runtime
-  dependency.
+- A small Go developer tool builds all six archives and their Git changelog.
+  Its SemVer/history helpers live in `internal/release`, tested in normal CI
+  but never imported by the product executable. The tool's entrypoint is excluded
+  from normal package builds. Release tooling is not a runtime dependency.

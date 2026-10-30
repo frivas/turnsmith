@@ -2,46 +2,97 @@ name: Release
 
 on:
   push:
-    tags: ['v0.*']
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Preview version without v (builds artifacts, never publishes)'
+        required: true
+        default: '0.1.0'
+        type: string
 
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  verify:
-    uses: ./.github/workflows/ci.yml
-  package:
-    needs: verify
+  version:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      prerelease: ${{ steps.version.outputs.prerelease }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
         with:
           go-version: '1.27.x'
           cache: false
-      - name: Build six archives and checksums
+      - name: Validate semantic version
+        id: version
         env:
-          RELEASE_TAG: ${{ github.ref_name }}
+          REQUESTED_VERSION: ${{ inputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$REQUESTED_VERSION"
+          fi
+          go run ./scripts/release.go --version "$version" --check-version
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+          core="${version%%+*}"
+          if [[ "$core" == *-* ]]; then
+            printf 'prerelease=true\n' >> "$GITHUB_OUTPUT"
+          else
+            printf 'prerelease=false\n' >> "$GITHUB_OUTPUT"
+          fi
+  verify:
+    needs: version
+    uses: ./.github/workflows/ci.yml
+  package:
+    needs: [version, verify]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache: false
+      - name: Build six archives, changelog, and checksums
+        env:
+          RELEASE_VERSION: ${{ needs.version.outputs.version }}
           RELEASE_COMMIT: ${{ github.sha }}
         run: >-
           go run ./scripts/release.go
-          --version "${RELEASE_TAG#v}"
+          --version "$RELEASE_VERSION"
           --commit "$RELEASE_COMMIT"
+          --changelog
       - name: Verify checksums
         run: sha256sum --check SHA256SUMS
         working-directory: dist
       - uses: actions/upload-artifact@v7
         with:
-          name: release-archives
+          name: turnsmith-${{ needs.version.outputs.version }}
           path: dist/*
           if-no-files-found: error
-      - name: Create draft for maintainer review
+      - name: Publish complete release with changelog
+        if: github.event_name == 'push'
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: >-
-          gh release create "$RELEASE_TAG" dist/*
-          --verify-tag --draft --generate-notes
-          --title "turnsmith $RELEASE_TAG"
+          PRERELEASE: ${{ needs.version.outputs.prerelease }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release create "$RELEASE_TAG" dist/* \
+            --verify-tag --draft --prerelease="$PRERELEASE" \
+            --notes-file dist/CHANGELOG.md --title "turnsmith $RELEASE_TAG"
+          gh release edit "$RELEASE_TAG" --draft=false

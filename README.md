@@ -51,6 +51,17 @@ Use `shasum -a 256 ARCHIVE` on macOS, `sha256sum ARCHIVE` on Linux, or
 A Homebrew tap is not available yet. Name availability must be checked before
 publishing packages or creating a formula. See [release instructions](docs/releasing.md).
 
+## Releases
+
+Push a SemVer tag such as `v0.1.0` to run native CI and automatically publish a
+GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
+and ARM64. Each release includes its Git changelog, download links, and SHA-256
+checksums. Prerelease tags such as `v0.2.0-rc.1` create GitHub prereleases.
+
+The Release workflow also supports manual previews that build and upload the
+same artifacts without tagging or publishing. See [releasing](docs/releasing.md)
+for the commands, version rules, and platform signing status.
+
 ## Quick start
 
 ```sh

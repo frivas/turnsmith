@@ -36,10 +36,21 @@ implemented work and outstanding research suggestions. No separate checklist of
 another assistant's suggested improvements was present in the inherited handoff.
 Do not claim that an unavailable review has been fully implemented.
 
-The first-release policy remains a human decision: channels, signing and trust
-requirements, offline macOS first launch, and who publishes. No signing service,
-Homebrew tap/formula, release tag, or release publication has been provisioned.
-The map's one non-research ticket per session rule still applies.
+The maintainer requested SemVer-tagged releases with a changelog and compiled
+packages for all six targets, and explicitly selected automatic publication
+after checks pass. The Release workflow now validates SemVer `v*` tags, calls
+native CI, builds all six archives, generates a changelog from Git history, and
+publishes the completed release. Changelog text is both the release body and an
+attached file, and is packaged inside each archive. Prerelease tags are marked
+as prereleases. Manual workflow_dispatch runs preview all artifacts without
+creating a tag or release. See `docs/releasing.md` for exact commands.
+
+Remaining trust questions are signing, provenance, Homebrew scope, and any offline
+first-launch requirements. Do not represent those as implemented. No actual tag
+or release has been published merely to test this automation. The maintainer
+selects and pushes a tag when ready; no additional draft-review click is required.
+The map's one non-research ticket per session rule still applies unless the
+maintainer explicitly requests broader execution.
 
 The implementation-session notes below are historical. Their earlier claims
 that Git, a public repository, canonical naming, and an issue map do not exist
