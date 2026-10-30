@@ -9,10 +9,10 @@ import (
 	"strconv"
 	"strings"
 
-	"scramble/internal/app"
-	"scramble/internal/output"
-	"scramble/internal/puzzle"
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/app"
+	"github.com/frivas/turnsmith/internal/output"
+	"github.com/frivas/turnsmith/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 type Build struct{ Version, Commit, Date string }
@@ -21,13 +21,13 @@ type CLI struct {
 	Build   Build
 }
 
-const help = `scramble generates filtered random-move scrambles for casual practice.
+const help = `turnsmith generates filtered random-move scrambles for casual practice.
 
 Usage:
-  scramble [flags]
-  scramble puzzles [--json]
-  scramble version
-  scramble help
+  turnsmith [flags]
+  turnsmith puzzles [--json]
+  turnsmith version
+  turnsmith help
 
 Generation flags:
   -p, --puzzle ID    Puzzle ID or alias (default 333)
@@ -44,7 +44,7 @@ Notation: U D L R F B, optionally followed by 2 or an ASCII apostrophe.
 A half turn counts as one token. Random moves do not uniformly sample states
 and are not approved for official competition. No runtime network access.
 `
-const puzzleHelp = "Usage: scramble puzzles [--json]\n\nList supported puzzles, aliases, methods, and capabilities.\n"
+const puzzleHelp = "Usage: turnsmith puzzles [--json]\n\nList supported puzzles, aliases, methods, and capabilities.\n"
 
 type parsed struct {
 	command             string
@@ -76,7 +76,7 @@ func parse(args []string) (parsed, error) {
 			p.command = args[0]
 			args = args[1:]
 		default:
-			return p, app.Invalid("unexpected command or positional argument %q; run \"scramble help\"", args[0])
+			return p, app.Invalid("unexpected command or positional argument %q; run \"turnsmith help\"", args[0])
 		}
 	}
 	seen := make(map[string]bool)
@@ -98,7 +98,7 @@ func parse(args []string) (parsed, error) {
 		}
 		allowed := key == "--help" || (p.command == "puzzles" && key == "--json") || (p.command == "generate" && (key == "--puzzle" || key == "--method" || key == "--length" || key == "--count" || key == "--seed" || key == "--json" || key == "--version"))
 		if !allowed {
-			return p, app.Invalid("unknown flag %q for %s; run \"scramble help\"", key, p.command)
+			return p, app.Invalid("unknown flag %q for %s; run \"turnsmith help\"", key, p.command)
 		}
 		if seen[key] {
 			return p, app.Invalid("flag %s supplied more than once", key)
@@ -204,10 +204,10 @@ func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
 		return write(help)
 	}
 	if p.version {
-		return write("scramble " + c.Build.Version + "\n")
+		return write("turnsmith " + c.Build.Version + "\n")
 	}
 	if p.command == "version" {
-		return write(fmt.Sprintf("scramble %s\ncommit: %s\nbuilt: %s\n", c.Build.Version, c.Build.Commit, c.Build.Date))
+		return write(fmt.Sprintf("turnsmith %s\ncommit: %s\nbuilt: %s\n", c.Build.Version, c.Build.Commit, c.Build.Date))
 	}
 	if p.command == "puzzles" {
 		if p.json {

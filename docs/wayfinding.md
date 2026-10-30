@@ -4,10 +4,12 @@ The canonical plan is [Map the route to Turnsmith's first public release](https:
 Decisions and their evidence live in GitHub Issues. This document explains how
 to continue the map; it does not duplicate ticket answers.
 
-The project name is `turnsmith`, owned on GitHub by `frivas`. The current source
-still uses the earlier executable and module name `scramble`. Settle the identity
-ticket before implementing that migration. The map covers the first public
-release, with existing v0.1.0 behavior retained.
+The project and executable name is `turnsmith`, owned on GitHub by `frivas`.
+The canonical Go module is `github.com/frivas/turnsmith`, with entrypoint
+`cmd/turnsmith`. The user confirmed the executable rename after charting the map.
+The identity ticket still tracks any remaining attribution and Go-installed
+metadata questions. The map covers the first public release, with existing
+v0.1.0 generation behavior retained.
 
 ## Tracker operations
 

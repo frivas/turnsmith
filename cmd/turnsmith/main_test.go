@@ -11,7 +11,7 @@ import (
 )
 
 func TestExecutable(t *testing.T) {
-	name := "scramble"
+	name := "turnsmith"
 	if runtime.GOOS == "windows" {
 		name += ".exe"
 	}

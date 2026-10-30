@@ -7,10 +7,10 @@ import (
 	"os"
 	"os/signal"
 
-	"scramble/internal/app"
-	"scramble/internal/cli"
-	"scramble/internal/cube333"
-	"scramble/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/app"
+	"github.com/frivas/turnsmith/internal/cli"
+	"github.com/frivas/turnsmith/internal/cube333"
+	"github.com/frivas/turnsmith/internal/puzzle"
 )
 
 // Linker variables are build metadata, never generation state.

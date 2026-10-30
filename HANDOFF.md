@@ -1,8 +1,8 @@
 # Codex handoff: turnsmith
 
 Updated 2026-10-30. Workspace: `/Users/francisco/Code/personal/turnsmith`.
-The folder is named turnsmith; the implemented project and executable are named
-scramble. Keep that distinction when locating files.
+The folder, project, and executable are named turnsmith. The current executable
+entrypoint is `cmd/turnsmith`, and the module is `github.com/frivas/turnsmith`.
 
 ## Current continuation status
 
@@ -10,8 +10,11 @@ The user confirmed **turnsmith** as the project name and authorized a public
 repository at https://github.com/frivas/turnsmith. It was created by the `frivas`
 GitHub account, and the active CLI account was immediately restored to
 `frivas-at-navteca`. Local Git initialization now works, with `main` and an
-`origin` remote. The implementation still uses `scramble`; its rename has not
-been performed or silently decided.
+`origin` remote. The user subsequently confirmed that the executable must also be `turnsmith`.
+The entrypoint, module/imports, CLI text, release packaging, and current usage
+documentation are now aligned with that name. The RNG domain remains
+`scramble/rng/v1` so the existing golden sequences stay stable. No release tag
+has been published. Remaining identity questions stay in the map ticket.
 
 The canonical release-planning artifact is
 [Map the route to Turnsmith's first public release](https://github.com/frivas/turnsmith/issues/1).
@@ -23,8 +26,15 @@ no release tag or release publication is authorized by charting the map.
 
 The implementation-session notes below are historical. In particular, their
 statements that Git was unavailable and no repository or map existed have been
-superseded by this continuation. The local v0.1.0 checks described below have
-not been rerun merely for creating the tracker; no Go source changed.
+superseded by this continuation. For the executable rename, format, tests, vet, race checks, native build/install,
+and six-target development packaging passed. Archive checksums, contents, Unix
+permissions, and the packaged macOS ARM64 version output were verified. Existing
+golden sequences passed unchanged. Fuzzing, benchmarks, and independent arithmetic
+verification below were not repeated for this rename. Consult the identity ticket
+for current verification results. Earlier `scramble` command paths and artifacts below are
+historical and superseded by `cmd/turnsmith` and `bin/turnsmith`. `dist/` now holds
+six `turnsmith_0.1.0-dev_*` archives and checksums. Earlier generated `scramble`
+artifacts were moved to `/tmp/turnsmith-legacy-artifacts`.
 
 ## Implementation-session record
 

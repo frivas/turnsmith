@@ -1,4 +1,4 @@
-# scramble
+# turnsmith
 
 Scrambles for physical twisty-puzzle practice.
 

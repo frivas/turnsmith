@@ -1,7 +1,9 @@
 # Reproducibility contract
 
 This document defines `333/random-move`, algorithm version `1`, and stream
-domain `scramble/rng/v1`. JSON schema version 1 is a separate compatibility
+domain `scramble/rng/v1`. This historical domain remains unchanged after the
+project and executable rename to `turnsmith`, preserving seeded sequences. JSON schema version 1 is a separate
+compatibility
 contract and does not determine the generator's sequence.
 
 ## Seed and stream encoding
@@ -91,7 +93,7 @@ cover seeds 0, 42, and the maximum seed; lengths 1, 2, 25, and 30; and multiple
 indices. They were independently calculated using Python integer arithmetic
 and compared with the Go executable. The tests also pin raw PCG outputs.
 
-For `scramble --seed 42`, the sequence is:
+For `turnsmith --seed 42`, the sequence is:
 
 ```text
 L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2 B' L

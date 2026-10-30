@@ -1,7 +1,7 @@
 //go:build ignore
 
 // Run from the repository root: go run ./scripts/release.go --version 0.1.0
-// This developer tool has no third-party dependencies; it is not part of scramble.
+// This developer tool has no third-party dependencies; it is not part of turnsmith.
 package main
 
 import (
@@ -56,7 +56,7 @@ func run() error {
 	if err := os.MkdirAll(*out, 0755); err != nil {
 		return err
 	}
-	temp, err := os.MkdirTemp("", "scramble-release-")
+	temp, err := os.MkdirTemp("", "turnsmith-release-")
 	if err != nil {
 		return err
 	}
@@ -64,7 +64,7 @@ func run() error {
 	var sums strings.Builder
 	for _, goos := range []string{"darwin", "linux", "windows"} {
 		for _, arch := range []string{"amd64", "arm64"} {
-			executable := "scramble"
+			executable := "turnsmith"
 			extension := ".tar.gz"
 			if goos == "windows" {
 				executable += ".exe"
@@ -72,14 +72,14 @@ func run() error {
 			}
 			binary := filepath.Join(temp, executable)
 			flags := fmt.Sprintf("-s -w -X main.version=%s -X main.commit=%s -X main.date=%s", *version, *commit, timestamp.Format(time.RFC3339))
-			command := exec.Command("go", "build", "-trimpath", "-ldflags", flags, "-o", binary, "./cmd/scramble")
+			command := exec.Command("go", "build", "-trimpath", "-ldflags", flags, "-o", binary, "./cmd/turnsmith")
 			command.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+arch, "CGO_ENABLED=0")
 			command.Stdout = os.Stdout
 			command.Stderr = os.Stderr
 			if err := command.Run(); err != nil {
 				return fmt.Errorf("build %s/%s: %w", goos, arch, err)
 			}
-			name := fmt.Sprintf("scramble_%s_%s_%s%s", *version, goos, arch, extension)
+			name := fmt.Sprintf("turnsmith_%s_%s_%s%s", *version, goos, arch, extension)
 			path := filepath.Join(*out, name)
 			if err := archive(path, executable, binary, timestamp, goos == "windows"); err != nil {
 				return fmt.Errorf("archive %s: %w", name, err)

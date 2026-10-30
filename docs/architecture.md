@@ -6,7 +6,7 @@ a puzzle, and `random-move` describes an available method for it.
 
 | Package | Responsibility |
 | --- | --- |
-| `cmd/scramble` | Build metadata, signal context, OS entropy, explicit registration, process exit |
+| `cmd/turnsmith` | Build metadata, signal context, OS entropy, explicit registration, process exit |
 | `internal/cli` | Strict flag parsing, explicit-length tracking, help, discovery, exit codes |
 | `internal/app` | Resolve defaults and aliases, validate limits, seed, derive independent streams, assemble batches |
 | `internal/puzzle` | Generator boundary, typed capabilities, immutable registry and sorted discovery |
@@ -57,9 +57,9 @@ is needed to produce legal outer-face sequences.
   external dependencies.
 - PCG raw words plus a project-owned bounded-integer operation define algorithm
   version 1. Convenience APIs do not decide the seeded sequence.
-- The module is provisionally `scramble`, since no repository owner or URL has
-  been chosen. Replace the module path and internal imports before remote Go
-  installation or publication. Local build and Go installation already work.
+- The canonical module is `github.com/frivas/turnsmith`; the executable entrypoint
+  is `cmd/turnsmith`. The historical RNG domain `scramble/rng/v1` stays fixed so
+  the project rename does not change seeded output.
 - Linker variables hold version, commit, and build date. They are the only
   package variables and are never changed by generation or CLI execution.
 - A small Go developer tool builds all six archives. It is excluded from normal

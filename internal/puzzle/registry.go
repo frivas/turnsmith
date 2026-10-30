@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 type GeneratorDescriptor struct {

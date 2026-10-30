@@ -13,11 +13,11 @@ import (
 	"strings"
 	"testing"
 
-	"scramble/internal/app"
-	"scramble/internal/cli"
-	"scramble/internal/cube333"
-	"scramble/internal/puzzle"
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/app"
+	"github.com/frivas/turnsmith/internal/cli"
+	"github.com/frivas/turnsmith/internal/cube333"
+	"github.com/frivas/turnsmith/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 func runner(t testing.TB) cli.CLI {
@@ -65,7 +65,7 @@ func TestErrorMessages(t *testing.T) {
 		args []string
 		want string
 	}{
-		{[]string{"--puzzle", "444"}, "error: unsupported puzzle \"444\"; run \"scramble puzzles\" to list supported puzzles\n"},
+		{[]string{"--puzzle", "444"}, "error: unsupported puzzle \"444\"; run \"turnsmith puzzles\" to list supported puzzles\n"},
 		{[]string{"--method", "random-state"}, "error: puzzle \"333\" does not support method \"random-state\"\n"},
 		{[]string{"--length", "0"}, "error: --length must be an integer between 1 and 1000\n"},
 	} {
@@ -83,11 +83,11 @@ func TestHelpVersionDiscovery(t *testing.T) {
 		}
 	}
 	_, out, _ := run(t, "--version")
-	if out != "scramble 0.1.0\n" {
+	if out != "turnsmith 0.1.0\n" {
 		t.Fatal(out)
 	}
 	_, out, _ = run(t, "version")
-	if out != "scramble 0.1.0\ncommit: test\nbuilt: unknown\n" {
+	if out != "turnsmith 0.1.0\ncommit: test\nbuilt: unknown\n" {
 		t.Fatal(out)
 	}
 	_, out, _ = run(t, "puzzles", "--json")

@@ -44,4 +44,4 @@ jobs:
         run: >-
           gh release create "$RELEASE_TAG" dist/*
           --verify-tag --draft --generate-notes
-          --title "scramble $RELEASE_TAG"
+          --title "turnsmith $RELEASE_TAG"

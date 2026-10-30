@@ -1,6 +1,6 @@
-# scramble
+# turnsmith
 
-Offline Rubik's Cube scrambles in a single executable. Run `scramble` to print
+Offline Rubik's Cube scrambles in a single executable. Run `turnsmith` to print
 25 moves for casual 3×3×3 practice, with no headings or extra output.
 
 Only **333 / random-move** is implemented. This method filters simple redundant
@@ -16,24 +16,26 @@ network access, configuration files, or other programs.
 From this source directory:
 
 ```sh
-go build -trimpath -o bin/scramble ./cmd/scramble
-./bin/scramble
+go build -trimpath -o bin/turnsmith ./cmd/turnsmith
+./bin/turnsmith
 ```
 
-On Windows, use `go build -trimpath -o bin/scramble.exe ./cmd/scramble` and run
-`.\bin\scramble.exe`.
+On Windows, use `go build -trimpath -o bin/turnsmith.exe ./cmd/turnsmith` and run
+`.\bin\turnsmith.exe`.
 
 To install with Go from a local checkout:
 
 ```sh
-go install ./cmd/scramble
+go install ./cmd/turnsmith
 ```
 
 Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
-directory to your PATH. The provisional module name is `scramble`; a remote
-`go install ...@v0.1.0` command will be supplied after the owner chooses a repository
-and replaces the module path and internal import prefixes. No remote install
-path or published release is claimed yet.
+directory to your PATH. The canonical module is `github.com/frivas/turnsmith`.
+The public source repository is [frivas/turnsmith](https://github.com/frivas/turnsmith).
+After the first release is tagged, the versioned install command will be
+`go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`. That release is not
+published yet. Ordinary Go builds currently report `0.1.0-dev`; archive builds
+receive version metadata from the release script.
 
 Release packaging produces `.tar.gz` archives for macOS and Linux and `.zip`
 archives for Windows, on AMD64 and ARM64. Once a release is published, download
@@ -48,17 +50,17 @@ publishing packages or creating a formula. See [release instructions](docs/relea
 ## Quick start
 
 ```sh
-scramble
-scramble --length 30
-scramble --count 10
-scramble --seed 42
-scramble --puzzle 333 --method random-move
-scramble --count 5 --seed 42 --json
-scramble puzzles
-scramble puzzles --json
-scramble version
-scramble --version
-scramble help
+turnsmith
+turnsmith --length 30
+turnsmith --count 10
+turnsmith --seed 42
+turnsmith --puzzle 333 --method random-move
+turnsmith --count 5 --seed 42 --json
+turnsmith puzzles
+turnsmith puzzles --json
+turnsmith version
+turnsmith --version
+turnsmith help
 ```
 
 Aliases `3x3` and `3x3x3` select `333`. Unsupported identifiers, including `444`,
@@ -160,7 +162,7 @@ Implementation packages are internal; there is no stable public Go API.
 
 ## License and attribution
 
-[MIT](LICENSE), copyright scramble contributors.
+[MIT](LICENSE), copyright turnsmith contributors.
 [Third-party notices](THIRD_PARTY_NOTICES.md) credit Go and PCG. This is an
 independent implementation of the provided specification, with no copied
 scrambler code.

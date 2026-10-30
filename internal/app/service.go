@@ -8,8 +8,8 @@ import (
 	"strconv"
 	"strings"
 
-	"scramble/internal/puzzle"
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 type InvalidInput struct{ Message string }
@@ -61,7 +61,7 @@ func (s Service) Generate(ctx context.Context, req Request) (Result, error) {
 	}
 	d, ok := s.Registry.Resolve(req.Puzzle)
 	if !ok {
-		return Result{}, Invalid("unsupported puzzle %q; run \"scramble puzzles\" to list supported puzzles", req.Puzzle)
+		return Result{}, Invalid("unsupported puzzle %q; run \"turnsmith puzzles\" to list supported puzzles", req.Puzzle)
 	}
 	if req.Method == "" {
 		req.Method = d.DefaultMethod

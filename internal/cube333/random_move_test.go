@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"scramble/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/puzzle"
 )
 
 func TestInvariants(t *testing.T) {

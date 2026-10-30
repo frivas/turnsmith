@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"scramble/internal/cube333"
-	"scramble/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/cube333"
+	"github.com/frivas/turnsmith/internal/puzzle"
 )
 
 func registry(t testing.TB) *puzzle.Registry {

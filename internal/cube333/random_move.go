@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"scramble/internal/cube"
-	"scramble/internal/puzzle"
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/cube"
+	"github.com/frivas/turnsmith/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 type RandomMove struct{}

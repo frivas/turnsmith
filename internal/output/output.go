@@ -8,8 +8,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"scramble/internal/app"
-	"scramble/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/app"
+	"github.com/frivas/turnsmith/internal/puzzle"
 )
 
 func JSON(w io.Writer, value any) error {

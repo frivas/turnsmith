@@ -10,10 +10,10 @@ import (
 	"strings"
 	"testing"
 
-	"scramble/internal/app"
-	"scramble/internal/cube333"
-	"scramble/internal/puzzle"
-	"scramble/internal/random"
+	"github.com/frivas/turnsmith/internal/app"
+	"github.com/frivas/turnsmith/internal/cube333"
+	"github.com/frivas/turnsmith/internal/puzzle"
+	"github.com/frivas/turnsmith/internal/random"
 )
 
 func service(t testing.TB) app.Service {

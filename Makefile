@@ -1,7 +1,7 @@
 .PHONY: build test check fmt bench release
 
 build:
-	go build -trimpath -o bin/scramble ./cmd/scramble
+	go build -trimpath -o bin/turnsmith ./cmd/turnsmith
 
 test:
 	go test ./...
