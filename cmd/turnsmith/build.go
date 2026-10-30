@@ -9,10 +9,20 @@ import (
 
 // Explicit release metadata wins; embedded Go metadata fills available defaults.
 func resolveBuildMetadata(build cli.Build, info *debug.BuildInfo) cli.Build {
+	deriveVersion, deriveCommit, deriveDate := build.Version == "", build.Commit == "", build.Date == ""
+	if deriveVersion {
+		build.Version = developmentVersion
+	}
+	if deriveCommit {
+		build.Commit = "unknown"
+	}
+	if deriveDate {
+		build.Date = "unknown"
+	}
 	if info == nil {
 		return build
 	}
-	if build.Version == developmentVersion && info.Main.Version != "" && info.Main.Version != "(devel)" {
+	if deriveVersion && info.Main.Version != "" && info.Main.Version != "(devel)" {
 		build.Version = strings.TrimPrefix(info.Main.Version, "v")
 	}
 	var revision, timestamp string
@@ -27,13 +37,13 @@ func resolveBuildMetadata(build cli.Build, info *debug.BuildInfo) cli.Build {
 			modified = setting.Value == "true"
 		}
 	}
-	if build.Commit == "unknown" && revision != "" {
+	if deriveCommit && revision != "" {
 		build.Commit = revision
 		if modified {
 			build.Commit += "-dirty"
 		}
 	}
-	if build.Date == "unknown" && timestamp != "" {
+	if deriveDate && timestamp != "" {
 		build.Date = timestamp
 	}
 	return build

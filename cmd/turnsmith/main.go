@@ -18,9 +18,9 @@ const developmentVersion = "0.1.0-dev"
 
 // Linker variables are build metadata, never generation state.
 var (
-	version = developmentVersion
-	commit  = "unknown"
-	date    = "unknown"
+	version string
+	commit  string
+	date    string
 )
 
 func main() { os.Exit(run()) }
