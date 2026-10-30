@@ -1,0 +1,43 @@
+[
+  {
+    "seed": "0",
+    "length": 1,
+    "sequences": [
+      "F"
+    ]
+  },
+  {
+    "seed": "0",
+    "length": 2,
+    "sequences": [
+      "F R",
+      "L' F'",
+      "F2 D2"
+    ]
+  },
+  {
+    "seed": "42",
+    "length": 25,
+    "sequences": [
+      "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2 B' L",
+      "L2 B L2 R' B' L2 F' D F' D U F U2 B U' R2 U2 R2 L' U' B' U F' D F'",
+      "D' R2 L2 F2 B2 U2 R U2 B L B F' D L B2 F' R L' D' R L' F2 D' U F2"
+    ]
+  },
+  {
+    "seed": "42",
+    "length": 30,
+    "sequences": [
+      "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2 B' L B' L2 B2 R U",
+      "L2 B L2 R' B' L2 F' D F' D U F U2 B U' R2 U2 R2 L' U' B' U F' D F' B' R D2 F' L'"
+    ]
+  },
+  {
+    "seed": "18446744073709551615",
+    "length": 25,
+    "sequences": [
+      "U L D2 U' B2 F' D2 L D' R L F2 U B2 D R D2 L' R D' F B2 R' F2 D",
+      "L2 R U B R L2 U' R' B' U2 L F U R D2 R F2 U' F' U D B' L U D"
+    ]
+  }
+]
