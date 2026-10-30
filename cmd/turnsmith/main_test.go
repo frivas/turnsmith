@@ -26,6 +26,8 @@ func TestExecutable(t *testing.T) {
 	}{
 		{nil, 0}, {[]string{"--seed", "42", "--json"}, 0}, {[]string{"--version"}, 0}, {[]string{"version"}, 0}, {[]string{"help"}, 0}, {[]string{"puzzles", "--json"}, 0},
 		{[]string{"--seed", "-1"}, 2}, {[]string{"--puzzle", "444"}, 2},
+		{[]string{"--steps", "--seed", "42", "--length", "3", "--color", "never"}, 0},
+		{[]string{"--steps", "--json"}, 2},
 	} {
 		command := exec.Command(binary, tc.args...)
 		var out, stderr bytes.Buffer
@@ -49,6 +51,9 @@ func TestExecutable(t *testing.T) {
 		}
 		if stderr.Len() != 0 {
 			t.Fatal(stderr.String())
+		}
+		if len(tc.args) > 0 && tc.args[0] == "--steps" && !strings.Contains(out.String(), "Step 3/3: U") {
+			t.Fatal(out.String())
 		}
 		if len(tc.args) == 0 && len(strings.Fields(out.String())) != 25 {
 			t.Fatal(out.String())

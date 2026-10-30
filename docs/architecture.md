@@ -11,7 +11,7 @@ a puzzle, and `random-move` describes an available method for it.
 | `internal/app` | Resolve defaults and aliases, validate limits, seed, derive independent streams, assemble batches |
 | `internal/puzzle` | Generator boundary, typed capabilities, immutable registry and sorted discovery |
 | `internal/cube` | Face, turn, layer count, size-aware validation and notation |
-| `internal/cube333` | 333 descriptor and filtered random-move selection |
+| `internal/cube333` | 333 generation, optional facelet state simulation, and terminal step diagrams |
 | `internal/random` | Decimal seeds, entropy reads, SHA-256 stream encoding, PCG initialization, bounded integers |
 | `internal/output` | Completed-result text, JSON, and discovery-table rendering |
 
@@ -68,3 +68,27 @@ is needed to produce legal outer-face sequences.
   Its SemVer/history helpers live in `internal/release`, tested in normal CI
   but never imported by the product executable. The tool's entrypoint is excluded
   from normal package builds. Release tooling is not a runtime dependency.
+
+## Optional step diagrams
+
+`--steps` selects a renderer registered by canonical puzzle ID in `cli.CLI.Guides`.
+The renderer interface accepts a completed sequence, context, writer, and color
+choice. The entrypoint wires the 333 guide independently of generator registration;
+future puzzle guides can be registered without changing CLI dispatch or serializers.
+Aliases resolve through the same puzzle registry. Unsupported guides and JSON/step
+combinations fail explicitly. The diagram mode limits the whole batch to 1000 moves
+before writing output.
+
+The 333 facelet model owns a local solved state and applies outer-face turns to
+positions and normals in integer 3D coordinates. It is never called during scramble
+generation and does not track or reject repeated states. Each diagram is a snapshot
+after a sequence prefix, with all six faces viewed directly from outside. Rendering
+checks cancellation per step and propagates writer failures. ASCII color letters
+remain present with and without ANSI backgrounds. Automatic color detection lives
+at the executable boundary and respects NO_COLOR and TERM=dumb.
+
+`internal/cube333/testdata/states.json` contains independently generated states
+from [cubejs 1.3.2](https://github.com/ldez/cubejs), checked in URFDLB facelet order.
+The fixtures cover all 18 single moves, all prefixes of the seed-42 scramble, and
+noncommuting sequences. This reference was used only to produce test data; it is
+not a runtime, Go-module, or CI dependency.

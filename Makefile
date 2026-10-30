@@ -1,6 +1,6 @@
 .PHONY: build test check fmt bench release
 
-VERSION ?= 0.1.0-dev
+VERSION ?= 0.2.0-dev
 
 build:
 	go build -trimpath -o bin/turnsmith ./cmd/turnsmith

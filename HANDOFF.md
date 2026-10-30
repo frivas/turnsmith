@@ -4,6 +4,28 @@ Updated 2026-10-30. Workspace: `/Users/francisco/Code/personal/turnsmith`.
 The folder, project, and executable are named turnsmith. The current executable
 entrypoint is `cmd/turnsmith`, and the module is `github.com/frivas/turnsmith`.
 
+## Terminal step diagrams, v0.2.0
+
+The maintainer requested holding guidance and the result of every scramble move,
+and selected colored terminal diagrams over an HTML viewer. `--steps` now prints
+the full sequence and seed, white-up/green-front instructions, a solved cube,
+and the complete six-face state after each move. `--color auto|always|never`
+controls labeled truecolor tiles. Auto mode detects a terminal and respects
+NO_COLOR/TERM=dumb. Ordinary text and JSON keep their existing behavior; steps
+and JSON are mutually exclusive, with a 1000-move total diagram limit.
+
+The integer-coordinate facelet model and terminal guide live in cube333, separate
+from generation. CLI renderers are registered by canonical puzzle ID in main.
+47 independent cubejs 1.3.2 reference states cover all turns and every prefix of
+a seeded scramble. Reference tooling is temporary and adds no Go/runtime/CI
+dependency. Inverse, face rotation, sticker conservation, cancellation, output
+failure, option validation, aliases, batches, ANSI/plain equivalence, and native
+executable tests pass. Real macOS PTY auto-color and NO_COLOR were checked.
+The README includes a visually checked solved reference SVG, also packaged in
+release archives. Seed domain, generator algorithm, and original golden vectors
+are unchanged. The additive feature is being shipped as v0.2.0; check the tag
+workflow and release page for final publication/validation state.
+
 ## Current continuation status
 
 Public repository: [frivas/turnsmith](https://github.com/frivas/turnsmith).

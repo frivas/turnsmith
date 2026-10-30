@@ -15,26 +15,26 @@ not a competition standard.
 Download a compiled executable from [GitHub Releases](https://github.com/frivas/turnsmith/releases/latest).
 No Go installation is required. Once installed, `turnsmith` runs offline.
 
-The v0.1.0 downloads are:
+The v0.2.0 downloads are:
 
 | Platform | Architecture | Download |
 | --- | --- | --- |
-| macOS | Apple Silicon, ARM64 | [darwin_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_darwin_arm64.tar.gz) |
-| macOS | Intel, AMD64 | [darwin_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_darwin_amd64.tar.gz) |
-| Linux | ARM64 | [linux_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_linux_arm64.tar.gz) |
-| Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_linux_amd64.tar.gz) |
-| Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_windows_arm64.zip) |
-| Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_windows_amd64.zip) |
+| macOS | Apple Silicon, ARM64 | [darwin_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_darwin_arm64.tar.gz) |
+| macOS | Intel, AMD64 | [darwin_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_darwin_amd64.tar.gz) |
+| Linux | ARM64 | [linux_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_linux_arm64.tar.gz) |
+| Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_linux_amd64.tar.gz) |
+| Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_windows_arm64.zip) |
+| Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_windows_amd64.zip) |
 
 ### macOS and Linux
 
-This downloads v0.1.0 for your machine, checks its SHA-256, and installs it in
+This downloads v0.2.0 for your machine, checks its SHA-256, and installs it in
 `~/.local/bin`. Change `version` to install another published release.
 
 ```sh
 (
   set -eu
-  version=0.1.0
+  version=0.2.0
   case "$(uname -s)" in
     Darwin) os=darwin ;;
     Linux) os=linux ;;
@@ -69,8 +69,8 @@ then open a new terminal. Verify the installation with `turnsmith --version`.
 
 ### Windows
 
-Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.1.0/SHA256SUMS).
-In PowerShell, run `Get-FileHash .\turnsmith_0.1.0_windows_amd64.zip -Algorithm SHA256`,
+Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.2.0/SHA256SUMS).
+In PowerShell, run `Get-FileHash .\turnsmith_0.2.0_windows_amd64.zip -Algorithm SHA256`,
 using your downloaded filename, and compare it with the matching line in
 `SHA256SUMS`. Extract the ZIP, put `turnsmith.exe` in a folder on your PATH, and
 run `turnsmith --version` in a new terminal.
@@ -83,11 +83,11 @@ available. See [releasing](docs/releasing.md) for the current signing status.
 If you have Go 1.27 or later:
 
 ```sh
-go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0
+go install github.com/frivas/turnsmith/cmd/turnsmith@v0.2.0
 ```
 
 Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
-directory to your PATH. Use `@latest` instead of `@v0.1.0` for the latest stable
+directory to your PATH. Use `@latest` instead of `@v0.2.0` for the latest stable
 Go module version.
 
 ### Build from source
@@ -105,7 +105,7 @@ On Windows, build with `-o bin/turnsmith.exe` and run `.\bin\turnsmith.exe`.
 
 Read the [changelog](CHANGELOG.md) or browse [release downloads](https://github.com/frivas/turnsmith/releases).
 
-Push a SemVer tag such as `v0.1.0` to run native CI and automatically publish a
+Push a SemVer tag such as `v0.2.0` to run native CI and automatically publish a
 GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
 and ARM64. Each release includes its Git changelog, download links, and SHA-256
 checksums. Prerelease tags such as `v0.2.0-rc.1` create GitHub prereleases.
@@ -145,6 +145,8 @@ and a final newline. Batches are generated completely before output starts.
 | `--count` | `-n` | `1` | Decimal integer 1–10000 |
 | `--seed` | | OS entropy | Unsigned decimal 64-bit integer |
 | `--json` | | `false` | Boolean |
+| `--steps` | | `false` | Show initial and per-move cube diagrams |
+| `--color` | | `auto` | `auto`, `always`, `never`; requires `--steps` |
 | `--help` | `-h` | | Show help |
 | `--version` | | | Name and version only |
 
@@ -156,6 +158,51 @@ and help; `version` accepts help; `help` takes no positional arguments.
 1,000,000 moves. Errors go to stderr with `error:` and no scramble output for
 invalid requests. Exit codes: 0 success, 1 runtime or output failure, 2 invalid
 input, 130 interruption. An output failure may leave already-written bytes.
+
+## Holding the cube and following a scramble
+
+Start with a solved cube. Hold the **white center on top** and the **green center
+facing you**, then keep that orientation throughout the scramble. The face
+letters name positions, not whichever colored tile happens to be there.
+
+![Solved cube reference, with white on top and green in front](docs/cube-orientation.svg)
+
+`U` is up, `D` down, `L` left, `R` right, `F` front, and `B` back. Turn only the
+named outer layer. A plain letter is a 90-degree clockwise turn **looking
+directly at that face**; an apostrophe reverses it, and `2` means 180 degrees.
+This viewpoint matters for the back, left, and bottom faces. For example, `R'`
+means turn the right face 90 degrees counterclockwise when looking at its center.
+These orientation and notation conventions follow the
+[WCA reference](https://www.worldcubeassociation.org/regulations/#4d1); using them
+does not make this generator competition approved.
+
+For a labeled, colored diagram after every move:
+
+```sh
+turnsmith --seed 42 --length 3 --steps
+```
+
+The guide prints the full scramble, holding instructions, the solved starting
+state, and the resulting six-face tile diagram after each move. The example is
+`L2 D' U`, so it shows four states, starting at `Step 0/3: solved`. Each batch
+scramble starts solved independently. A different physical starting state will
+not match these diagrams. Other color schemes can follow face positions, but
+the displayed colors assume the reference scheme above.
+
+Colors are automatic on a terminal. Tiles also carry `W`, `Y`, `O`, `R`, `G`,
+or `B` so they remain readable without color. To keep colors while scrolling a
+full scramble, or to request plain diagrams:
+
+```sh
+turnsmith --seed 42 --steps --color always | less -R
+turnsmith --seed 42 --steps --color never
+```
+
+`--color auto` respects `NO_COLOR` and `TERM=dumb` and omits ANSI codes when
+output is redirected. Step diagrams support at most 1000 moves across a batch
+and cannot be combined with `--json`. Default text and JSON generation do not
+include diagrams. The state simulator is used only for displaying these steps;
+it does not change the generator or its reproducibility contract.
 
 ## Notation and algorithm
 
@@ -194,7 +241,7 @@ timestamps or host paths. Inapplicable lengths can be omitted by future methods.
 ```json
 {
   "schema_version": 1,
-  "app_version": "0.1.0",
+  "app_version": "0.2.0",
   "puzzle": "333",
   "method": "random-move",
   "algorithm_version": "1",
@@ -223,8 +270,8 @@ Windows, with race and short fuzz checks on Linux. Benchmarks have no hardware
 thresholds. No external module downloads are required to build or test.
 
 See [architecture](docs/architecture.md), [adding a puzzle](docs/adding-a-puzzle.md),
-and [releasing](docs/releasing.md). Solvers, timers, history, diagrams, telemetry,
-plugins, configuration files, and other working puzzles are outside v0.1.0.
+and [releasing](docs/releasing.md). Solvers, timers, history, telemetry,
+plugins, configuration files, and other working puzzles are outside v0.2.0.
 Implementation packages are internal; there is no stable public Go API.
 
 ## License and attribution

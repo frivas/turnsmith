@@ -26,7 +26,7 @@ func runner(t testing.TB) cli.CLI {
 	if err != nil {
 		t.Fatal(err)
 	}
-	return cli.CLI{Service: app.Service{Registry: r, Entropy: bytes.NewReader(make([]byte, 8)), Version: "0.1.0"}, Build: cli.Build{Version: "0.1.0", Commit: "test", Date: "unknown"}}
+	return cli.CLI{Service: app.Service{Registry: r, Entropy: bytes.NewReader(make([]byte, 8)), Version: "0.1.0"}, Build: cli.Build{Version: "0.1.0", Commit: "test", Date: "unknown"}, Guides: map[string]cli.StepRenderer{"333": cube333.StepGuide{}}}
 }
 func run(t testing.TB, args ...string) (int, string, string) {
 	t.Helper()
@@ -232,5 +232,56 @@ func TestForeignPuzzleUsesUnchangedCLIAndRenderers(t *testing.T) {
 	status = c.Run(context.Background(), []string{"-p", "test", "-l", "25"}, &out, &stderr)
 	if status != 2 || out.Len() != 0 || !strings.Contains(stderr.String(), "does not support --length") {
 		t.Fatal(status, stderr.String())
+	}
+}
+
+func TestStepDiagrams(t *testing.T) {
+	status, plain, stderr := run(t, "--steps", "--seed", "42", "--length", "3", "--color", "never")
+	if status != 0 || stderr != "" || !strings.HasPrefix(plain, "Scramble 1/1 | seed 42\nL2 D' U\n") || strings.Contains(plain, "\x1b[") {
+		t.Fatal(status, plain, stderr)
+	}
+	for _, want := range []string{"Step 0/3: solved", "Step 1/3: L2", "Step 2/3: D'", "Step 3/3: U"} {
+		if !strings.Contains(plain, want) {
+			t.Fatal(want, plain)
+		}
+	}
+	status, alias, stderr := run(t, "--steps", "--seed", "42", "--length", "3", "--puzzle", "3x3")
+	if status != 0 || stderr != "" || alias != plain {
+		t.Fatal(status, stderr, alias)
+	}
+	status, colored, stderr := run(t, "--steps", "--seed", "42", "--length", "3", "--color=always")
+	if status != 0 || stderr != "" || !strings.Contains(colored, "\x1b[") {
+		t.Fatal(status, stderr, colored)
+	}
+	_, batch, stderr := run(t, "--steps", "--seed", "42", "--length", "1", "--count", "2")
+	if stderr != "" || strings.Count(batch, "Step 0/1: solved") != 2 || !strings.Contains(batch, "Scramble 2/2") {
+		t.Fatal(stderr, batch)
+	}
+	for _, args := range [][]string{
+		{"--steps", "--json"}, {"--color", "always"}, {"--steps", "--color", "invalid"},
+		{"--steps", "--seed", "42", "--length", "1000", "--count", "2"}, {"puzzles", "--steps"},
+	} {
+		status, out, stderr := run(t, args...)
+		if status != 2 || out != "" || !strings.HasPrefix(stderr, "error: ") {
+			t.Fatal(args, status, out, stderr)
+		}
+	}
+	c := runner(t)
+	c.Color = true
+	var out, errOut bytes.Buffer
+	if status := c.Run(context.Background(), []string{"--steps", "--seed", "42", "--length", "1"}, &out, &errOut); status != 0 || !strings.Contains(out.String(), "\x1b[") {
+		t.Fatal(status, errOut.String())
+	}
+	out.Reset()
+	if status := c.Run(context.Background(), []string{"--seed", "42", "--length", "1"}, &out, &errOut); status != 0 || strings.Contains(out.String(), "\x1b[") {
+		t.Fatal(status, out.String(), errOut.String())
+	}
+	if status := c.Run(context.Background(), []string{"--steps", "--seed", "42"}, failWriter{}, &errOut); status != 1 {
+		t.Fatal(status, errOut.String())
+	}
+	c.Guides = nil
+	out.Reset()
+	if status := c.Run(context.Background(), []string{"--steps"}, &out, &errOut); status != 2 || out.Len() != 0 {
+		t.Fatal(status, out.String(), errOut.String())
 	}
 }

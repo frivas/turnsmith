@@ -33,7 +33,8 @@ No adjacent same-face move is permitted, including differing turns. No
 A-opposite(A)-A window is permitted, since commuting the middle move permits
 combining the repeated faces. The algorithm does not prohibit every possible
 longer redundancy or guarantee that different scrambles reach different states.
-There is no simulator or visited-state tracking.
+Generation uses no simulator or visited-state tracking. The optional step guide
+simulates the resulting sequence only after generation; it does not filter moves.
 
 Each valid face and turn is selected uniformly at that step. This does not
 uniformly sample reachable states. A sequence can return to a prior state, and

@@ -1,0 +1,195 @@
+{
+  "source": "https://github.com/ldez/cubejs",
+  "reference_version": "1.3.2",
+  "face_order": "URFDLB",
+  "cases": [
+    {
+      "moves": "",
+      "facelets": "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
+    },
+    {
+      "moves": "U",
+      "facelets": "UUUUUUUUUBBBRRRRRRRRRFFFFFFDDDDDDDDDFFFLLLLLLLLLBBBBBB"
+    },
+    {
+      "moves": "U2",
+      "facelets": "UUUUUUUUULLLRRRRRRBBBFFFFFFDDDDDDDDDRRRLLLLLLFFFBBBBBB"
+    },
+    {
+      "moves": "U'",
+      "facelets": "UUUUUUUUUFFFRRRRRRLLLFFFFFFDDDDDDDDDBBBLLLLLLRRRBBBBBB"
+    },
+    {
+      "moves": "D",
+      "facelets": "UUUUUUUUURRRRRRFFFFFFFFFLLLDDDDDDDDDLLLLLLBBBBBBBBBRRR"
+    },
+    {
+      "moves": "D2",
+      "facelets": "UUUUUUUUURRRRRRLLLFFFFFFBBBDDDDDDDDDLLLLLLRRRBBBBBBFFF"
+    },
+    {
+      "moves": "D'",
+      "facelets": "UUUUUUUUURRRRRRBBBFFFFFFRRRDDDDDDDDDLLLLLLFFFBBBBBBLLL"
+    },
+    {
+      "moves": "L",
+      "facelets": "BUUBUUBUURRRRRRRRRUFFUFFUFFFDDFDDFDDLLLLLLLLLBBDBBDBBD"
+    },
+    {
+      "moves": "L2",
+      "facelets": "DUUDUUDUURRRRRRRRRBFFBFFBFFUDDUDDUDDLLLLLLLLLBBFBBFBBF"
+    },
+    {
+      "moves": "L'",
+      "facelets": "FUUFUUFUURRRRRRRRRDFFDFFDFFBDDBDDBDDLLLLLLLLLBBUBBUBBU"
+    },
+    {
+      "moves": "R",
+      "facelets": "UUFUUFUUFRRRRRRRRRFFDFFDFFDDDBDDBDDBLLLLLLLLLUBBUBBUBB"
+    },
+    {
+      "moves": "R2",
+      "facelets": "UUDUUDUUDRRRRRRRRRFFBFFBFFBDDUDDUDDULLLLLLLLLFBBFBBFBB"
+    },
+    {
+      "moves": "R'",
+      "facelets": "UUBUUBUUBRRRRRRRRRFFUFFUFFUDDFDDFDDFLLLLLLLLLDBBDBBDBB"
+    },
+    {
+      "moves": "F",
+      "facelets": "UUUUUULLLURRURRURRFFFFFFFFFRRRDDDDDDLLDLLDLLDBBBBBBBBB"
+    },
+    {
+      "moves": "F2",
+      "facelets": "UUUUUUDDDLRRLRRLRRFFFFFFFFFUUUDDDDDDLLRLLRLLRBBBBBBBBB"
+    },
+    {
+      "moves": "F'",
+      "facelets": "UUUUUURRRDRRDRRDRRFFFFFFFFFLLLDDDDDDLLULLULLUBBBBBBBBB"
+    },
+    {
+      "moves": "B",
+      "facelets": "RRRUUUUUURRDRRDRRDFFFFFFFFFDDDDDDLLLULLULLULLBBBBBBBBB"
+    },
+    {
+      "moves": "B2",
+      "facelets": "DDDUUUUUURRLRRLRRLFFFFFFFFFDDDDDDUUURLLRLLRLLBBBBBBBBB"
+    },
+    {
+      "moves": "B'",
+      "facelets": "LLLUUUUUURRURRURRUFFFFFFFFFDDDDDDRRRDLLDLLDLLBBBBBBBBB"
+    },
+    {
+      "moves": "L2",
+      "facelets": "DUUDUUDUURRRRRRRRRBFFBFFBFFUDDUDDUDDLLLLLLLLLBBFBBFBBF"
+    },
+    {
+      "moves": "L2 D'",
+      "facelets": "DUUDUUDUURRRRRRBBFBFFBFFRRRDDDDDDUUULLLLLLBFFBBFBBFLLL"
+    },
+    {
+      "moves": "L2 D' U",
+      "facelets": "DDDUUUUUUBBFRRRBBFRRRBFFRRRDDDDDDUUUBFFLLLBFFLLLBBFLLL"
+    },
+    {
+      "moves": "L2 D' U F",
+      "facelets": "DDDUUUFLFUBFURRUBFRBRRFRRFRBRBDDDUUUBFDLLDBFDLLLBBFLLL"
+    },
+    {
+      "moves": "L2 D' U F L'",
+      "facelets": "RDDRUURLFUBFURRUBFBBRDFRUFRLRBFDDLUUDDDFLFBLBLLFBBULLD"
+    },
+    {
+      "moves": "L2 D' U F L' B'",
+      "facelets": "BFDRUURLFUBRURDUBDBBRDFRUFRLRBFDDFRFLDDULFULBFUDLBLLBL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D'",
+      "facelets": "BFDRUURLFUBRURDLBLBBRDFRUBDBDFRDRLFFLDDULFUFRFUDLBLULB"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2",
+      "facelets": "BFDRUULLFUBRURDLBLBBRLFRDBDBDFRDRRFFRFUFLUDDLFUULBDULB"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2",
+      "facelets": "FLLUURDFBRFUURDLBLFUULFRDBDBDFRDRRFFUBRFLUDDLBBRLBDULB"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D'",
+      "facelets": "FLLUURDFBRFUURDULBFUULFRLBLFRFDDFBRRUBRFLUDBDBBRLBDDDL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2",
+      "facelets": "FLLUURFRFDFUURDRLBLBLRFLUUFBFDDDFBRRUBUFLUDBRBBRLBDDDL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R",
+      "facelets": "FLLUULFRFRUDLRFBDULBDRFFUURBFDDDLBRBUBUFLUDBRFBRRBDLDL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F",
+      "facelets": "FLLUULRUUFUDRRFFDUURLUFBRFDBLRDDLBRBUBBFLFDBDFBRRBDLDL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2",
+      "facelets": "BLLDULBUUFUDRRFFDULRLDFBRFDFLRUDLRRBDBDFLFBBUFBRRBULDU"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U",
+      "facelets": "BDBUULULLFBRRRFFDUFUDDFBRFDFLRUDLRRBLRLFLFBBUDBDRBULDU"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2",
+      "facelets": "FDBUULRLLFBRRRFFDUUUDUFBDFDBLRUDLURBUBBFLFLRLDBRRBDLDF"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2",
+      "facelets": "BRUUULRLLFBLRRFFDUUUDUFBDFDBLRUDLBDFUBBFLFRRLFDLDBRRBD"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U",
+      "facelets": "RUBLURLLUFDLRRFFDUFBLUFBDFDBLRUDLBDFUUDFLFRRLUBBDBRRBD"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2",
+      "facelets": "BUBUURBLUFDLRRFFDUDBLRFBBFDRLRLDLLDFLRRFLFDUUUBDDBURBF"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D",
+      "facelets": "BUBUURBLUFDLRRFBFDDBLRFBDUULLRDDLFLRLRRFLFRBFUBDDBUFDU"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2",
+      "facelets": "LUBDURFLUFDLRRFBFDUBLUFBDUUBLRUDLBLRFBRFLFRRLUBDDBRFDD"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2",
+      "facelets": "LURDULFLRDFBFRRLDFUBFUFDDUUBLBUDRBLUFBRFLFRRLUBDBBRLDD"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2",
+      "facelets": "RLFLUDRULFBRFRRLDFUBDUFDDUUBLBUDRBLUDFBFLFRRLUBFBBRLDD"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2 B'",
+      "facelets": "RFDLUDRULFBRFRLLDFUBDUFDDUUBLBUDRFRRBFBLLFURLFRDBBDUBL"
+    },
+    {
+      "moves": "L2 D' U F L' B' D' L2 U2 D' F2 R F L2 U L2 B2 U L2 D L2 R2 U2 B' L",
+      "facelets": "LFDDUDDULFBRFRLLDFRBDLFDRUUULBUDRDRRULBRLFLFBFRFBBUUBB"
+    },
+    {
+      "moves": "R U R' U'",
+      "facelets": "UULUUFUUFRRUBRRURRFFDFFUFFFDDRDDDDDDBLLLLLLLLBRRBBBBBB"
+    },
+    {
+      "moves": "R U R' U' R U R' U' R U R' U' R U R' U' R U R' U' R U R' U'",
+      "facelets": "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB"
+    },
+    {
+      "moves": "U F R2 B' D2 L'",
+      "facelets": "FLFFUDRLDRRURRUFLDUFBUFBURRLUUBDDBRRDDBFLBDDBLBLLBUFFL"
+    }
+  ]
+}

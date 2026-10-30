@@ -3,6 +3,17 @@
 Release downloads and the full commit-by-commit notes are available on
 [GitHub Releases](https://github.com/frivas/turnsmith/releases).
 
+## [0.2.0] - 2026-10-30
+
+### Added
+
+- Optional `--steps` mode with cube-holding instructions, a solved reference,
+  and colored six-face diagrams after every move.
+- `--color auto|always|never`, readable color-letter labels, terminal/piping
+  detection, and NO_COLOR support for step diagrams.
+- Independently checked 3×3×3 facelet simulation, used only for visualization.
+- README orientation guide and a labeled reference cube diagram.
+
 ## [0.1.0] - 2026-10-30
 
 ### Added
@@ -35,3 +46,5 @@ checksums are included. Homebrew, platform signing, notarization, and build
 provenance are follow-up work.
 
 [0.1.0]: https://github.com/frivas/turnsmith/releases/tag/v0.1.0
+
+[0.2.0]: https://github.com/frivas/turnsmith/releases/tag/v0.2.0

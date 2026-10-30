@@ -45,3 +45,12 @@ generator needs reachable-state sampling, a solver behind the same boundary,
 solution inversion, correctness and performance tests, and licensing review.
 Neither extension is merely a different length, and neither automatically
 qualifies a tool for official competition.
+
+## Optional visual guides
+
+A puzzle may provide a `cli.StepRenderer` implementation, registered in the
+entrypoint's `CLI.Guides` by canonical puzzle ID. Guides consume completed move
+sequences, so they must not draw randomness or modify generation. A guide owns
+its local state, explains its starting orientation, checks cancellation, and
+propagates writer errors. The 333 guide currently supports outer-face moves only.
+Guide support is optional; ordinary text and JSON remain available without it.

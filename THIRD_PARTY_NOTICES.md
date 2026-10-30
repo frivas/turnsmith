@@ -14,6 +14,14 @@ The algorithm specification in docs/reproducibility.md records the arithmetic
 contract; future adaptations of external implementations must record their
 repository, commit, author credit, and license here.
 
+## Cube-state test reference
+
+The facelet state model and terminal renderer are independently implemented.
+The checked-in state fixtures were generated using cubejs 1.3.2 as an independent
+reference: https://github.com/ldez/cubejs, by akheron and maintained by ldez,
+licensed under MIT. Its source code and dependencies are not included in the
+product or used by CI. Only the resulting test states are retained.
+
 ## Go license
 
 Copyright (c) 2009 The Go Authors. All rights reserved.

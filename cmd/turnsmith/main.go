@@ -14,7 +14,7 @@ import (
 	"github.com/frivas/turnsmith/internal/puzzle"
 )
 
-const developmentVersion = "0.1.0-dev"
+const developmentVersion = "0.2.0-dev"
 
 // Linker variables are build metadata, never generation state.
 var (
@@ -34,6 +34,11 @@ func run() int {
 	}
 	info, _ := debug.ReadBuildInfo()
 	build := resolveBuildMetadata(cli.Build{Version: version, Commit: commit, Date: date}, info)
-	runner := cli.CLI{Service: app.Service{Registry: registry, Entropy: rand.Reader, Version: build.Version}, Build: build}
+	stat, statErr := os.Stdout.Stat()
+	color := statErr == nil && stat.Mode()&os.ModeCharDevice != 0 && os.Getenv("TERM") != "dumb" && os.Getenv("NO_COLOR") == ""
+	runner := cli.CLI{
+		Service: app.Service{Registry: registry, Entropy: rand.Reader, Version: build.Version}, Build: build,
+		Guides: map[string]cli.StepRenderer{"333": cube333.StepGuide{}}, Color: color,
+	}
 	return runner.Run(ctx, os.Args[1:], os.Stdout, os.Stderr)
 }

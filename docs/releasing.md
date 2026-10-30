@@ -18,7 +18,7 @@ git tag -a v0.1.0 -m "Release v0.1.0"
 git push origin v0.1.0
 ```
 
-These commands are an example for the first release, not a claim that it exists.
+These commands illustrate the tag workflow; choose an unused version for your release.
 Choose the version and source commit before running them. Pushing the tag is the
 publication action; a separate draft-review click is not required.
 
@@ -88,7 +88,7 @@ packages and a changelog; it does not tag or publish. Go commands also work
 directly on Windows.
 
 The release script runs from the repository root and accepts `--commit`, `--date`
-RFC3339, and `--out`. Defaults are version `0.1.0-dev`, commit `unknown`, and
+RFC3339, and `--out`. Defaults are version `0.2.0-dev`, commit `unknown`, and
 current UTC time. Example with explicit metadata:
 
 ```sh
@@ -96,7 +96,8 @@ go run ./scripts/release.go --version 0.1.0 --commit abcdef1234567 --date 2026-1
 ```
 
 Archives contain the executable at the root, README.md, LICENSE,
-THIRD_PARTY_NOTICES.md, and CHANGELOG.md when `--changelog` is enabled. The
+THIRD_PARTY_NOTICES.md, `docs/cube-orientation.svg`, and CHANGELOG.md when
+`--changelog` is enabled. The
 workflow always enables it. `--check-version` validates a version without
 building or writing artifacts. Targets are darwin, linux, and windows crossed with
 amd64 and arm64. Unix executables have mode 0755. Windows archives contain
@@ -111,7 +112,7 @@ On macOS, use `shasum -a 256 -c SHA256SUMS`. On Windows compare each
 `Get-FileHash` result with its entry. Build metadata is injected with Go linker
 flags, taking precedence over embedded Go metadata. Without explicit values,
 [Go build information](https://pkg.go.dev/runtime/debug#BuildInfo) supplies the
-module version and available VCS revision/time. The fallback is `0.1.0-dev`
+module version and available VCS revision/time. The fallback is `0.2.0-dev`
 with `unknown` for missing commit/date. A modified checkout marks a derived
 commit with `-dirty`. The `date:` line is a source commit time when derived and
 a build timestamp when explicitly injected; it is never the runtime clock.
