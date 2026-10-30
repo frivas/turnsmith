@@ -44,3 +44,13 @@ Research evidence is maintained on `research/turnsmith-name` and
 Use the resolution links for the exact evidence snapshot. Research findings do
 not settle command naming, distribution costs, signing policy, or publication
 approval on the maintainer's behalf.
+
+## First-release completion
+
+The maintainer requested delivery of the first visible release and reconciliation
+of completed work. The current first-release scope is GitHub archives and Go
+installation, with automatic SemVer publication, changelogs, and checksums. Paid
+platform signing, notarization, provenance, and Homebrew are follow-up work.
+The map's release tickets should close with source, CI, package, and publication
+evidence once their concrete work is complete. Historical chart-only rules do
+not require retaining completed execution tickets after that scope expansion.

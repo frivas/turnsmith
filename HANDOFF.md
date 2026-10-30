@@ -45,12 +45,20 @@ attached file, and is packaged inside each archive. Prerelease tags are marked
 as prereleases. Manual workflow_dispatch runs preview all artifacts without
 creating a tag or release. See `docs/releasing.md` for exact commands.
 
-Remaining trust questions are signing, provenance, Homebrew scope, and any offline
-first-launch requirements. Do not represent those as implemented. No actual tag
-or release has been published merely to test this automation. The maintainer
-selects and pushes a tag when ready; no additional draft-review click is required.
-The map's one non-research ticket per session rule still applies unless the
-maintainer explicitly requests broader execution.
+The maintainer subsequently asked to fix the missing release/changelog and
+reconcile the remaining tickets. A visible root `CHANGELOG.md` and current-main
+CI badge were added. The first `v0.1.0` tag now points to
+`2017083abfd8ee5ce444631ba6c3ca304b918ca1`, with automatic publication through
+https://github.com/frivas/turnsmith/actions/runs/41095533734. Check that workflow
+and https://github.com/frivas/turnsmith/releases/tag/v0.1.0 for the actual final
+state. Current main CI was green; older failures remain historical records.
+
+The release uses existing checksummed, unsigned platform packages. Signing,
+notarization, provenance, and Homebrew are follow-up work beyond v0.1.0, not
+unfinished functionality to claim as implemented or paid services to provision.
+The latest request expands execution to the first release and reconciliation
+of completed tickets; the earlier chart-only and one-ticket limits must not
+be mistaken for a request to leave already completed release work open.
 
 The implementation-session notes below are historical. Their earlier claims
 that Git, a public repository, canonical naming, and an issue map do not exist
