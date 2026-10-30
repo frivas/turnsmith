@@ -34,8 +34,12 @@ directory to your PATH. The canonical module is `github.com/frivas/turnsmith`.
 The public source repository is [frivas/turnsmith](https://github.com/frivas/turnsmith).
 After the first release is tagged, the versioned install command will be
 `go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`. That release is not
-published yet. Ordinary Go builds currently report `0.1.0-dev`; archive builds
-receive version metadata from the release script.
+published yet. Versioned Go installs derive the version from embedded Go module
+metadata. Local builds use available Go metadata and fall back to `0.1.0-dev`.
+Archive builds retain the release script's explicit version, commit, and date.
+`turnsmith version` shows the available commit and date; missing values remain
+`unknown`. A derived date is the source commit time, while archives report their
+explicit build date. A derived commit gains `-dirty` for a modified checkout.
 
 Release packaging produces `.tar.gz` archives for macOS and Linux and `.zip`
 archives for Windows, on AMD64 and ARM64. Once a release is published, download
@@ -162,7 +166,7 @@ Implementation packages are internal; there is no stable public Go API.
 
 ## License and attribution
 
-[MIT](LICENSE), copyright turnsmith contributors.
+[MIT](LICENSE), copyright Francisco Rivas and contributors.
 [Third-party notices](THIRD_PARTY_NOTICES.md) credit Go and PCG. This is an
 independent implementation of the provided specification, with no copied
 scrambler code.

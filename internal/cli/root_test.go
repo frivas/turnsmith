@@ -87,7 +87,7 @@ func TestHelpVersionDiscovery(t *testing.T) {
 		t.Fatal(out)
 	}
 	_, out, _ = run(t, "version")
-	if out != "turnsmith 0.1.0\ncommit: test\nbuilt: unknown\n" {
+	if out != "turnsmith 0.1.0\ncommit: test\ndate: unknown\n" {
 		t.Fatal(out)
 	}
 	_, out, _ = run(t, "puzzles", "--json")

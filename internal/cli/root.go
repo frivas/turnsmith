@@ -207,7 +207,7 @@ func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
 		return write("turnsmith " + c.Build.Version + "\n")
 	}
 	if p.command == "version" {
-		return write(fmt.Sprintf("turnsmith %s\ncommit: %s\nbuilt: %s\n", c.Build.Version, c.Build.Commit, c.Build.Date))
+		return write(fmt.Sprintf("turnsmith %s\ncommit: %s\ndate: %s\n", c.Build.Version, c.Build.Commit, c.Build.Date))
 	}
 	if p.command == "puzzles" {
 		if p.json {

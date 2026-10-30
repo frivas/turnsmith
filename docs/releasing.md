@@ -13,13 +13,14 @@ for remaining decisions and validation evidence.
    the chosen package namespace before adding a distribution channel.
 2. Validate the canonical module and `cmd/turnsmith` entrypoint. After a real
    release tag exists, the remote installation command will be
-   `go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`. Ordinary Go
-   builds currently report development metadata; the identity ticket tracks
-   the remaining version-reporting decision.
+   `go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`. Versioned Go
+   installs derive their version from embedded module metadata. Missing commit
+   and date information stays `unknown`; it is not inferred from the tag.
 3. Review the MIT ownership line, notices, and selected binary trust policy.
    Obtain successful native macOS, Linux, and Windows CI results for the actual
-   candidate. The first baseline passed on macOS/Linux but failed the Windows
-   formatting check. Track that blocker in the validation ticket.
+   candidate. The initial Windows formatting failure was reproduced as checkout
+   CRLF conversion; `.gitattributes` now keeps Go source LF on every OS. Track
+   the resulting native CI evidence in the validation ticket.
 4. Run the checks below and inspect final archive contents, executable names,
    permissions, metadata, and checksums. Cross-compilation alone does not prove
    native execution on other OSes.
@@ -61,7 +62,12 @@ sha256sum --check SHA256SUMS
 
 On macOS, use `shasum -a 256 -c SHA256SUMS`. On Windows compare each
 `Get-FileHash` result with its entry. Build metadata is injected with Go linker
-flags. Plain `go build` reports `0.1.0-dev`, commit `unknown`, date `unknown`.
+flags, taking precedence over embedded Go metadata. Without explicit values,
+[Go build information](https://pkg.go.dev/runtime/debug#BuildInfo) supplies the
+module version and available VCS revision/time. The fallback is `0.1.0-dev`
+with `unknown` for missing commit/date. A modified checkout marks a derived
+commit with `-dirty`. The `date:` line is a source commit time when derived and
+a build timestamp when explicitly injected; it is never the runtime clock.
 Archive timestamps are fixed to the supplied build date, and binaries use
 `-trimpath`. This is not a promise of identical archives across toolchains.
 

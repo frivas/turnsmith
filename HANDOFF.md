@@ -6,35 +6,50 @@ entrypoint is `cmd/turnsmith`, and the module is `github.com/frivas/turnsmith`.
 
 ## Current continuation status
 
-The user confirmed **turnsmith** as the project name and authorized a public
-repository at https://github.com/frivas/turnsmith. It was created by the `frivas`
-GitHub account, and the active CLI account was immediately restored to
-`frivas-at-navteca`. Local Git initialization now works, with `main` and an
-`origin` remote. The user subsequently confirmed that the executable must also be `turnsmith`.
-The entrypoint, module/imports, CLI text, release packaging, and current usage
-documentation are now aligned with that name. The RNG domain remains
-`scramble/rng/v1` so the existing golden sequences stay stable. No release tag
-has been published. Remaining identity questions stay in the map ticket.
+Public repository: [frivas/turnsmith](https://github.com/frivas/turnsmith).
+The repository was created as `frivas`, and the active GitHub CLI account was
+immediately restored to `frivas-at-navteca`. Use a process-scoped `frivas`
+credential for issue maintenance and the verified `frivas` SSH key for pushes.
 
-The canonical release-planning artifact is
+The maintainer confirmed `turnsmith` for the executable and canonical module
+`github.com/frivas/turnsmith`. The command, help/version text, build/install
+paths, packaging, and current documentation are aligned. The historical RNG
+domain `scramble/rng/v1` stays unchanged to preserve seeded sequences.
+
+The maintainer selected `Copyright (c) 2026 Francisco Rivas and contributors`
+and deriving available Go-installed metadata. Both are implemented. Explicit
+archive linker metadata takes precedence; Go module/VCS metadata fills defaults.
+Missing commit/date stays `unknown`, and modified checkouts mark derived commits
+with `-dirty`. The `version` command uses `date:` since derived timestamps describe
+the source revision, while archive dates describe the build.
+
+The Windows CI formatting failure was reproduced using `core.autocrlf=true`.
+The same source and Go toolchain passed with LF. `.gitattributes` now requires LF
+for Go files, and the Windows-style checkout reproduction passes. Native CI
+results and final candidate evidence belong in the validation ticket.
+
+The canonical plan is
 [Map the route to Turnsmith's first public release](https://github.com/frivas/turnsmith/issues/1).
-It has six native child issues, native blocking relationships, and two AFK
-research tickets. See [docs/wayfinding.md](docs/wayfinding.md) for tracker
-operations and the frontier query. The destination is the first public release,
-not a broader roadmap. Continue through that map. Human decisions remain open;
-no release tag or release publication is authorized by charting the map.
+Read [docs/wayfinding.md](docs/wayfinding.md) for tracker operations and
+[docs/release-status.md](docs/release-status.md) for the item-by-item status of
+implemented work and outstanding research suggestions. No separate checklist of
+another assistant's suggested improvements was present in the inherited handoff.
+Do not claim that an unavailable review has been fully implemented.
 
-The implementation-session notes below are historical. In particular, their
-statements that Git was unavailable and no repository or map existed have been
-superseded by this continuation. For the executable rename, format, tests, vet, race checks, native build/install,
-and six-target development packaging passed. Archive checksums, contents, Unix
-permissions, and the packaged macOS ARM64 version output were verified. Existing
-golden sequences passed unchanged. Fuzzing, benchmarks, and independent arithmetic
-verification below were not repeated for this rename. Consult the identity ticket
-for current verification results. Earlier `scramble` command paths and artifacts below are
-historical and superseded by `cmd/turnsmith` and `bin/turnsmith`. `dist/` now holds
-six `turnsmith_0.1.0-dev_*` archives and checksums. Earlier generated `scramble`
-artifacts were moved to `/tmp/turnsmith-legacy-artifacts`.
+The first-release policy remains a human decision: channels, signing and trust
+requirements, offline macOS first launch, and who publishes. No signing service,
+Homebrew tap/formula, release tag, or release publication has been provisioned.
+The map's one non-research ticket per session rule still applies.
+
+The implementation-session notes below are historical. Their earlier claims
+that Git, a public repository, canonical naming, and an issue map do not exist
+are superseded. Earlier `scramble` command paths are now `cmd/turnsmith` and
+`bin/turnsmith`. Old generated artifacts are in `/tmp/turnsmith-legacy-artifacts`.
+Local tests, race checks, vet, and format checks pass after the current changes;
+Go-installed metadata was verified through an isolated local module proxy.
+Previous fuzz, benchmark, and independent arithmetic results are historical,
+not newly rerun evidence. Rebuild archives with the final source commit and
+policy before publishing.
 
 ## Implementation-session record
 

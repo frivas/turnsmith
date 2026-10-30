@@ -7,8 +7,9 @@ to continue the map; it does not duplicate ticket answers.
 The project and executable name is `turnsmith`, owned on GitHub by `frivas`.
 The canonical Go module is `github.com/frivas/turnsmith`, with entrypoint
 `cmd/turnsmith`. The user confirmed the executable rename after charting the map.
-The identity ticket still tracks any remaining attribution and Go-installed
-metadata questions. The map covers the first public release, with existing
+The user also selected Francisco Rivas and contributors for MIT attribution
+and embedded Go metadata for versioned Go installations. The identity ticket
+records the resolution and verification of those choices. The map covers the first public release, with existing
 v0.1.0 generation behavior retained.
 
 ## Tracker operations

@@ -60,8 +60,10 @@ is needed to produce legal outer-face sequences.
 - The canonical module is `github.com/frivas/turnsmith`; the executable entrypoint
   is `cmd/turnsmith`. The historical RNG domain `scramble/rng/v1` stays fixed so
   the project rename does not change seeded output.
-- Linker variables hold version, commit, and build date. They are the only
-  package variables and are never changed by generation or CLI execution.
+- Linker variables hold explicit version, commit, and build date overrides.
+  Embedded Go module/VCS metadata fills available defaults once at startup.
+  The resolved values are local and shared by version output and JSON metadata;
+  generation and CLI execution never mutate the linker variables.
 - A small Go developer tool builds all six archives. It is excluded from normal
   package builds and the product executable; no release tooling is a runtime
   dependency.
