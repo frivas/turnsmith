@@ -37,7 +37,9 @@ retrying; the workflow does not overwrite an existing release.
 | Windows | AMD64, ARM64 | `.zip` | `turnsmith.exe` |
 
 Each release includes all six packages, `SHA256SUMS`, and `CHANGELOG.md`.
-The changelog is the release body and is also included inside each package.
+The generated changelog is the release body and is also included inside each
+package. The repository's [CHANGELOG.md](../CHANGELOG.md) provides a curated
+release history visible without downloading an artifact; update it before tagging.
 It lists commits since the closest reachable SemVer tag, including direct pushes,
 with commit links, a comparison link, and download links. The first release
 lists the complete history. Use meaningful commit subjects. Full Git history

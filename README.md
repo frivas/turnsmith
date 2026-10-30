@@ -1,5 +1,7 @@
 # turnsmith
 
+[![CI](https://github.com/frivas/turnsmith/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/frivas/turnsmith/actions/workflows/ci.yml?query=branch%3Amain)
+
 Offline Rubik's Cube scrambles in a single executable. Run `turnsmith` to print
 25 moves for casual 3×3×3 practice, with no headings or extra output.
 
@@ -52,6 +54,8 @@ A Homebrew tap is not available yet. Name availability must be checked before
 publishing packages or creating a formula. See [release instructions](docs/releasing.md).
 
 ## Releases
+
+Read the [changelog](CHANGELOG.md) or browse [release downloads](https://github.com/frivas/turnsmith/releases).
 
 Push a SemVer tag such as `v0.1.0` to run native CI and automatically publish a
 GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
