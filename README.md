@@ -12,46 +12,94 @@ not a competition standard.
 
 ## Installation
 
-Requires Go 1.27 or later to build. The installed executable needs no Go toolchain,
-network access, configuration files, or other programs.
+Download a compiled executable from [GitHub Releases](https://github.com/frivas/turnsmith/releases/latest).
+No Go installation is required. Once installed, `turnsmith` runs offline.
 
-From this source directory:
+The v0.1.0 downloads are:
+
+| Platform | Architecture | Download |
+| --- | --- | --- |
+| macOS | Apple Silicon, ARM64 | [darwin_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_darwin_arm64.tar.gz) |
+| macOS | Intel, AMD64 | [darwin_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_darwin_amd64.tar.gz) |
+| Linux | ARM64 | [linux_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_linux_arm64.tar.gz) |
+| Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_linux_amd64.tar.gz) |
+| Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_windows_arm64.zip) |
+| Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.1.0/turnsmith_0.1.0_windows_amd64.zip) |
+
+### macOS and Linux
+
+This downloads v0.1.0 for your machine, checks its SHA-256, and installs it in
+`~/.local/bin`. Change `version` to install another published release.
+
+```sh
+(
+  set -eu
+  version=0.1.0
+  case "$(uname -s)" in
+    Darwin) os=darwin ;;
+    Linux) os=linux ;;
+    *) echo "Use the Windows instructions below." >&2; exit 1 ;;
+  esac
+  case "$(uname -m)" in
+    arm64|aarch64) arch=arm64 ;;
+    x86_64|amd64) arch=amd64 ;;
+    *) echo "Unsupported CPU architecture." >&2; exit 1 ;;
+  esac
+  download_dir="$(mktemp -d)"
+  trap 'rm -rf "$download_dir"' EXIT
+  cd "$download_dir"
+  archive="turnsmith_${version}_${os}_${arch}.tar.gz"
+  base="https://github.com/frivas/turnsmith/releases/download/v${version}"
+  curl -fLO "$base/$archive"
+  curl -fLO "$base/SHA256SUMS"
+  if [ "$os" = darwin ]; then
+    shasum -a 256 --check --ignore-missing SHA256SUMS
+  else
+    sha256sum --check --ignore-missing SHA256SUMS
+  fi
+  tar -xzf "$archive" turnsmith
+  mkdir -p "$HOME/.local/bin"
+  install -m 755 turnsmith "$HOME/.local/bin/turnsmith"
+)
+```
+
+Make sure `~/.local/bin` is on your PATH. In zsh or bash, add
+`export PATH="$HOME/.local/bin:$PATH"` to your shell's startup file if needed,
+then open a new terminal. Verify the installation with `turnsmith --version`.
+
+### Windows
+
+Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.1.0/SHA256SUMS).
+In PowerShell, run `Get-FileHash .\turnsmith_0.1.0_windows_amd64.zip -Algorithm SHA256`,
+using your downloaded filename, and compare it with the matching line in
+`SHA256SUMS`. Extract the ZIP, put `turnsmith.exe` in a folder on your PATH, and
+run `turnsmith --version` in a new terminal.
+
+macOS and Windows binaries are currently unsigned. A Homebrew tap is not
+available. See [releasing](docs/releasing.md) for the current signing status.
+
+### Install with Go
+
+If you have Go 1.27 or later:
+
+```sh
+go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0
+```
+
+Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
+directory to your PATH. Use `@latest` instead of `@v0.1.0` for the latest stable
+Go module version.
+
+### Build from source
+
+From a checkout of this repository with Go 1.27 or later:
 
 ```sh
 go build -trimpath -o bin/turnsmith ./cmd/turnsmith
 ./bin/turnsmith
 ```
 
-On Windows, use `go build -trimpath -o bin/turnsmith.exe ./cmd/turnsmith` and run
-`.\bin\turnsmith.exe`.
-
-To install with Go from a local checkout:
-
-```sh
-go install ./cmd/turnsmith
-```
-
-Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
-directory to your PATH. The canonical module is `github.com/frivas/turnsmith`.
-The public source repository is [frivas/turnsmith](https://github.com/frivas/turnsmith).
-For a published version, use
-`go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`, replacing the version
-with an existing tag from [Releases](https://github.com/frivas/turnsmith/releases).
-Versioned Go installs derive the version from embedded Go module metadata. Local builds use available Go metadata and fall back to `0.1.0-dev`.
-Archive builds retain the release script's explicit version, commit, and date.
-`turnsmith version` shows the available commit and date; missing values remain
-`unknown`. A derived date is the source commit time, while archives report their
-explicit build date. A derived commit gains `-dirty` for a modified checkout.
-
-Release packaging produces `.tar.gz` archives for macOS and Linux and `.zip`
-archives for Windows, on AMD64 and ARM64. Once a release is published, download
-the archive for your OS and architecture from that repository's Releases page,
-verify its SHA-256 against `SHA256SUMS`, extract it, and put the executable on PATH.
-Use `shasum -a 256 ARCHIVE` on macOS, `sha256sum ARCHIVE` on Linux, or
-`Get-FileHash ARCHIVE -Algorithm SHA256` in PowerShell.
-
-A Homebrew tap is not available yet. Name availability must be checked before
-publishing packages or creating a formula. See [release instructions](docs/releasing.md).
+On Windows, build with `-o bin/turnsmith.exe` and run `.\bin\turnsmith.exe`.
 
 ## Releases
 
