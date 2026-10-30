@@ -2,8 +2,9 @@
 
 The public source repository is [frivas/turnsmith](https://github.com/frivas/turnsmith).
 The executable is `turnsmith`, and its canonical Go module is
-`github.com/frivas/turnsmith`. No release tag, published release, Homebrew tap,
-or formula exists yet. Follow the [release map](https://github.com/frivas/turnsmith/issues/1)
+`github.com/frivas/turnsmith`. Published versions and downloads appear on
+[Releases](https://github.com/frivas/turnsmith/releases). A Homebrew tap/formula
+is not configured. Follow the [release map](https://github.com/frivas/turnsmith/issues/1)
 for remaining decisions and validation evidence.
 
 ## Tag and publish

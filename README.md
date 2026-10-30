@@ -32,10 +32,10 @@ go install ./cmd/turnsmith
 Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
 directory to your PATH. The canonical module is `github.com/frivas/turnsmith`.
 The public source repository is [frivas/turnsmith](https://github.com/frivas/turnsmith).
-After the first release is tagged, the versioned install command will be
-`go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`. That release is not
-published yet. Versioned Go installs derive the version from embedded Go module
-metadata. Local builds use available Go metadata and fall back to `0.1.0-dev`.
+For a published version, use
+`go install github.com/frivas/turnsmith/cmd/turnsmith@v0.1.0`, replacing the version
+with an existing tag from [Releases](https://github.com/frivas/turnsmith/releases).
+Versioned Go installs derive the version from embedded Go module metadata. Local builds use available Go metadata and fall back to `0.1.0-dev`.
 Archive builds retain the release script's explicit version, commit, and date.
 `turnsmith version` shows the available commit and date; missing values remain
 `unknown`. A derived date is the source commit time, while archives report their
