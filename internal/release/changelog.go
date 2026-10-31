@@ -9,6 +9,8 @@ import (
 
 // Changelog lists commits since the closest reachable SemVer tag. With no
 // earlier release tag it lists the full history. The release's own tag is excluded.
+// Matching CHANGELOG.md highlights come from the resolved source commit, never
+// from the working tree or a newer HEAD.
 func Changelog(dir, version, commit string) (string, error) {
 	if err := ValidateVersion(version); err != nil {
 		return "", err
@@ -56,7 +58,15 @@ func Changelog(dir, version, commit string) (string, error) {
 	}
 	const repository = "https://github.com/frivas/turnsmith"
 	var notes strings.Builder
-	fmt.Fprintf(&notes, "# Turnsmith v%s\n\n## Changelog\n\n", version)
+	fmt.Fprintf(&notes, "# Turnsmith v%s\n\n", version)
+	// Highlights are optional for older commits and repositories without a
+	// changelog. Commit-derived notes remain available in either case.
+	changelog, _ := git("show", head+":CHANGELOG.md")
+	if highlights := versionHighlights(changelog, version); highlights != "" {
+		fmt.Fprintf(&notes, "## Highlights\n\n%s\n\n## Commits\n\n", highlights)
+	} else {
+		notes.WriteString("## Changelog\n\n")
+	}
 	if previous == "" {
 		notes.WriteString("First release. Changes from the initial commit:\n\n")
 	}
@@ -86,4 +96,25 @@ func Changelog(dir, version, commit string) (string, error) {
 	}
 	notes.WriteString("\nVerify downloads against the attached `SHA256SUMS`. macOS and Windows binaries are unsigned.\n")
 	return notes.String(), nil
+}
+
+func versionHighlights(changelog, version string) string {
+	lines := strings.Split(strings.ReplaceAll(changelog, "\r\n", "\n"), "\n")
+	start := -1
+	for index, line := range lines {
+		if !strings.HasPrefix(line, "## ") {
+			continue
+		}
+		if start >= 0 {
+			return strings.TrimSpace(strings.Join(lines[start:index], "\n"))
+		}
+		fields := strings.Fields(strings.TrimPrefix(line, "## "))
+		if len(fields) > 0 && (fields[0] == version || fields[0] == "["+version+"]") {
+			start = index + 1
+		}
+	}
+	if start >= 0 {
+		return strings.TrimSpace(strings.Join(lines[start:], "\n"))
+	}
+	return ""
 }

@@ -50,6 +50,9 @@ func TestChangelog(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	if strings.Contains(notes, "## Highlights") || !strings.Contains(notes, "## Changelog") {
+		t.Fatal("missing changelog file changed the commit-only format")
+	}
 	for _, want := range []string{"First release", "Initial generator", "Add batch generation", "/commit/" + first, "/commit/" + second} {
 		if !strings.Contains(notes, want) {
 			t.Errorf("initial changelog missing %q:\n%s", want, notes)
@@ -84,5 +87,70 @@ func TestChangelog(t *testing.T) {
 	}
 	if _, err := Changelog(dir, "01.0.0", latest); err == nil {
 		t.Fatal("invalid version accepted for changelog")
+	}
+}
+
+func TestVersionHighlights(t *testing.T) {
+	for _, heading := range []string{"## 0.3.0 - 2026-10-31", "## [0.3.0]", "## [0.3.0] - 2026-10-31"} {
+		text := "# Changelog\n\n## 0.3.0-rc.1 - 2026-10-30\n\nWrong prerelease notes.\n\n" + heading + "\n\n### Added\n\n- Selected feature.\n\n## [0.2.0]\n\nOlder notes.\n"
+		if got := versionHighlights(text, "0.3.0"); got != "### Added\n\n- Selected feature." {
+			t.Fatalf("%q: %q", heading, got)
+		}
+	}
+	for _, text := range []string{"", "## 0.3.0-rc.1\nWrong prerelease notes", "## 0.3.0+build.1\nOther build notes", "## [0.3.00]\nWrong version", "## 0.3.0\n\n## 0.2.0\nOther version"} {
+		if got := versionHighlights(text, "0.3.0"); got != "" {
+			t.Fatalf("unexpected highlights from %q: %q", text, got)
+		}
+	}
+}
+
+func TestChangelogHighlightsUseSelectedCommit(t *testing.T) {
+	dir := t.TempDir()
+	git := func(args ...string) string {
+		t.Helper()
+		args = append([]string{"-c", "user.name=Release Test", "-c", "user.email=release@example.invalid", "-c", "commit.gpgsign=false"}, args...)
+		command := exec.Command("git", args...)
+		command.Dir = dir
+		data, err := command.CombinedOutput()
+		if err != nil {
+			t.Fatalf("git %v: %v\n%s", args, err, data)
+		}
+		return strings.TrimSpace(string(data))
+	}
+	write := func(body string) {
+		t.Helper()
+		if err := os.WriteFile(filepath.Join(dir, "CHANGELOG.md"), []byte(body), 0644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	git("init")
+	write("# Changelog\n\n## 0.3.0 - 2026-10-31\n\n- Selected commit feature.\n\n## 0.2.0\n\n- Earlier feature.\n")
+	git("add", "CHANGELOG.md")
+	git("commit", "-m", "Prepare release")
+	selected := git("rev-parse", "HEAD")
+	write("## [0.3.0]\n\n- Newer HEAD feature.\n")
+	git("add", "CHANGELOG.md")
+	git("commit", "-m", "Update notes")
+	write("## [0.3.0]\n\n- Dirty working-tree feature.\n")
+	notes, err := Changelog(dir, "0.3.0", selected)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, want := range []string{"## Highlights\n\n- Selected commit feature.\n\n## Commits", "Prepare release", "/commit/" + selected} {
+		if !strings.Contains(notes, want) {
+			t.Fatalf("missing %q:\n%s", want, notes)
+		}
+	}
+	for _, unwanted := range []string{"Newer HEAD feature", "Dirty working-tree feature", "Earlier feature", "Update notes"} {
+		if strings.Contains(notes, unwanted) {
+			t.Fatalf("included %q:\n%s", unwanted, notes)
+		}
+	}
+	notes, err = Changelog(dir, "0.4.0", selected)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(notes, "## Highlights") || !strings.Contains(notes, "## Changelog") || !strings.Contains(notes, "Prepare release") {
+		t.Fatal("unmatched version lost commit-only fallback", notes)
 	}
 }
