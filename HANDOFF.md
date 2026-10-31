@@ -1,126 +1,84 @@
-# Turnsmith continuation
+# Turnsmith handoff
 
 Updated 2026-10-31. Workspace `/Users/francisco/Code/personal/turnsmith`.
-Current public stable release and installed Mac binary are still v0.2.0.
-v0.3.0 has NOT been tagged or published yet. Do not infer publication from README's prepared links.
 
-## Release verification in progress
+## Completed release
 
-GitHub access and automatic approval are restored. The maintainer explicitly
-requested publication, all Go checks, upload and Mac installation. Full Go tests,
-short race tests, vet, formatting and diff checks pass on the final WCA source.
-The earlier credit failure did not execute any Git command. Continue with signed
-commit/push, exact-commit packaging including corresponding source, hosted CI,
-automatic v0.3.0 publication, published-asset verification, both Mac binaries and
-remaining tracker closure. There is no current blocker.
+[Turnsmith v0.3.0](https://github.com/frivas/turnsmith/releases/tag/v0.3.0)
+is published from `6d8dd8979ce429d21a7fac45278ea5bf6ff00f72`.
+[Native candidate CI](https://github.com/frivas/turnsmith/actions/runs/41229226857)
+and the [actual release pipeline](https://github.com/frivas/turnsmith/actions/runs/41229421613)
+passed on macOS, Linux and Windows. All nine public assets were downloaded and
+verified: six platform archives, backend corresponding source, changelog and
+checksums. Each platform archive contains both native executables.
 
-## Active task and authorization
+Both published macOS ARM64 binaries are installed in `~/.local/bin` and report
+v0.3.0 with the tagged commit. The shell resolves `turnsmith` to that installation.
+Installed 222, 333 and 444 generation passed. The installed binary hashes are:
 
-The maintainer requested autonomous implementation of all researched terminal
-cubing improvements using Wayfinder, release and Mac installation, with questions
-only for blockers. Then expanded scope to WCA-style valid scrambles, explicitly
-rejected Java, and requested an own Go backend derived from TNoodle. Continue
-until implementation, verification, publication, installation and tracker closure
-are complete. Default 222/333/444 practice now uses method `wca`; explicit legacy
-`random-move` and `random-state` methods and their vectors remain unchanged.
+- turnsmith: `be3c8fd7e5291ca9f3cd49c558a3230bd850092bc7aa86e82ba0b6b45f2a8991`
+- turnsmith-wca: `d0ddbf396966fcba0390a3f3e586752080662a43b4a7985e4506e078de2f29fa`
 
-Map: [Deliver the complete terminal practice roadmap](https://github.com/frivas/turnsmith/issues/8).
-Original six feature tickets are closed with evidence. Release ticket15 remains
-open. Added native WCA sampling ticket16 and native Go 444 backend ticket17 are
-open, assigned to frivas and blocking15. Map execution notes override skill's
-chart-only and one-ticket limits and explicitly authorize parallel agents.
+The prior executable was backed up under the temporary directory
+`turnsmith-before-0.3.0-etz55709` before replacement.
 
-## Completed baseline commits
+[Deliver the complete terminal practice roadmap](https://github.com/frivas/turnsmith/issues/8)
+and every child ticket are closed with implementation and verification evidence.
+No work remains pending for this request. The earlier approval-credit failure
+was resolved and did not prevent final publication or installation.
 
-- `f41f378` complete terminal roadmap: input/inspect/inverse/final diagrams,
-  interactive guide, portability/completions, sessions/timer/statistics,
-  user-owned drills, native222/333 random-state, 444 random-move and daily sets.
-- `27e2865` input bounds/resize fixes.
-- `8cfeed0` Windows pending-directory-deletion lock retry, preserving ownership.
-- `24f4489` detailed committed changelog highlights in generated releases.
+## Behavior and boundaries
 
-All are pushed. [Native CI for24f4489](https://github.com/frivas/turnsmith/actions/runs/41181473996)
-passed on macOS/Linux/Windows, including Linux full race and fuzz tests. Six
-candidate archives and real Mac PTYs passed. These results predate the current
-WCA expansion and do NOT validate its final source.
+Default 222/333/444 practice uses `wca`. It applies minimum optimal distances of
+four moves for 222 and two for 333/444. Unseeded generation uses direct
+cryptographic randomness; JSON seed is empty and randomness is `cryptographic`.
+Explicit seeds and daily sets are reproducible `seeded-practice`. These are
+practice generators, not official WCA competition program approval.
 
-## Current WCA expansion, not committed yet
+Original explicit `333/random-move`, `444/random-move` and
+`222/333/random-state` methods and their vectors remain unchanged. Choosing a
+length requires `--method random-move`. The historical RNG domain stays
+`scramble/rng/v1`. JSON schema remains 1 with optional additional metadata.
 
-- `internal/randomstate/wca.go`: additive Cube222WCA/Cube333WCA, methodwca/v1,
-  optimal-distance rejection below4/2, independently checked shallow states.
-- `internal/random/entropy.go`, app/puzzle capability DirectEntropy: unseededwca
-  uses fresh cryptographic words; Result.Seed empty and Randomnesscryptographic.
-  Explicitseed remains deterministic, Randomnessseeded-practice. Original
-  streams/JSON unchanged for legacy methods. Entropy failure cancels and emits no
-  partial result. Timer must remain unseeded on later cryptographic attempts.
-- `internal/randomstate/facelets.go`: MIT native333 reduction adapter, normalizes
-  six center labels before conversion, validates counts/pieces/twist/flip/parity.
-- `internal/tnoodle444`: native Go adaptation of Shuang Chen's GPL3+ threephase
-  from thewca/tnoodle-lib commitd01a947d9f028f38085cda9b0507a9cf3d3f38a8.
-  Keep GPL headers and COPYING. Do NOT relabel this code MIT. It is linked only
-  by the separate `cmd/turnsmith-wca` GPL backend, never by the MIT main CLI.
-  Three-phase reduction uses existing Go333 solver callback, no Java or runtime
-  downloaded tables. All100 sampled targets passed independent geometry tests.
-- `internal/wcaengine`: MIT process adapter to sibling turnsmith-wca, bounded
-  JSON-line protocol1 and algorithmversion1, exact Uint64 entropy broker. Reuses
-  backend within batches, validates canonical notation, supports cancellation
-  and Close. Tests use fake subprocesses. No direct GPL solver link in core.
-- `cmd/turnsmith/main.go`: defaults wca for222/333/444, registers legacy methods.
-- Release script now builds/packages BOTH executables and BACKEND-LICENSE.txt.
-  Corresponding-source archive with vendored dependencies is implemented via
-  `internal/release.SourceArchive` and its checksum. Must verify offline build.
+The original MIT CLI links permissive dependencies. Its separate native Go
+`turnsmith-wca` backend contains the GPL-3.0-or-later TNoodle threephase port,
+with Shuang Chen attribution and the pinned upstream revision recorded in the
+source. Keep its COPYING and notices. Do not relabel that component MIT or link
+it into the MIT executable. There is no Java, runtime table download or runtime
+network dependency. Source archives include vendored dependencies for offline
+builds, and binaries and corresponding source must come from the same clean
+committed tree.
 
-WCA means practice following state/distance rules, not competition approval.
-Official competitions must use the current official program. Current primary
-WCA sources identify TNoodle-WCA1.2.3 and April1,2026 regulations. Seeded practice
-is not a claim of uniform sampling across all333states from a64bitroot.
+Other delivered features include imported algorithm inspection/inversion,
+interactive colored guidance and final diagrams, portable colors/completions,
+local sessions/timing/penalties/statistics and CSV/JSON recovery, user-owned
+algorithm training, and daily/shared practice sets. Default generation writes no
+practice files. See README and the user guides in docs.
 
-## Current agent ownership
+## Verification
 
-- `/root/randomstate_engine`: internal/tnoodle444/edge3.go, search.go, tests;
-  complete:100 sampled targets and full tests passed; earlier222333WCA work complete.
-- `/root/terminal_research`: README, terminal/daily/training/architecture docs,
-  CONTEXT, THIRD_PARTY_NOTICES updated for nativeWCAdefaults, two executables and
-  scopedGPLbackend. Earlier center1/2/3 port and tests complete.
-- `/root/adjacent_research`: earlier cubie/FullCube/util/moves port complete;
-  completed adversarial-source cancellation fix in fullcube.go and new
-  internal/release/source.go+tests for exact-commit source archive with vendored
-  modules. Earlier entropy and broker/facelet tests complete.
-- Root owns core wiring, cmd/turnsmith-wca, wcaengine client, facelet adapter,
-  release script/changelog, integration tests and publication/tracker work.
+Go unit/integration tests, short race checks, vet, formatting and module
+verification passed. Native full sweeps include 1000 333 targets and 100
+independently checked 444 targets. Go build metadata, archive contents,
+permissions, OS/CPU headers and checksums passed for all 12 packaged executables.
+Both executables built offline from corresponding source; its complete test
+suite passed offline during verification. Actual public Go installs at v0.3.0
+succeeded for both commands and generated 444 scrambles together. Mac PTYs
+verified navigation, timing, training, resize guards and terminal restoration.
 
-Agents share cwd; do not overwrite owned files. No agent makes commits/pushes.
+The first Windows candidate exposed lost source-archive executable bits.
+The final fix preserves Git tar permissions across staging filesystems, with a
+regression test and successful native Windows CI. Do not weaken that check.
 
-## Verification and remaining work
+## Development and account rules
 
-Fresh current-source main CLI/backend compiled and generated actual444scrambles.
-Native333 callback has regression for rotated-center UBRDFL state. Broker race
-and facelet race tests pass. Main executable tests now build both binaries and
-exercise a real444two-item batch. Need final fullsuite/race/vet/format, actual
-TTY flows with newdefaults, all6native archive validation, fresh hostedCI, tag
-v0.3.0, actual automatic release pipeline, download/check allpublishedassets,
-install BOTH published Mac binaries to ~/.local/bin, publicGo-install check,
-close16/17/15/map8 with immutable evidence and update this handoff to final state.
+Module `github.com/frivas/turnsmith`, Go 1.27.0. Main entrypoints are
+`cmd/turnsmith` and `cmd/turnsmith-wca`. Useful cache overrides in this sandbox:
+`GOCACHE=/tmp/scramble-go-cache GOMODCACHE=/tmp/turnsmith-go-mod-cache`.
+The RTK instruction file `/Users/francisco/.codex/RTK.md` is absent.
 
-Use `GOCACHE=/tmp/scramble-go-cache GOMODCACHE=/tmp/turnsmith-go-mod-cache`.
-Go1.27.0 module. `/Users/francisco/.codex/RTK.md` is absent.
-
-## GitHub and tools
-
-Repository public `frivas/turnsmith`. Writes must be frivas. Default gh account
-must remain frivas-at-navteca. Use per-process GH_TOKEN from `gh auth token
---hostname github.com --user frivas`, never print or persist it. Network and.git
-writes need escalated tools. SSH push and 1Password signing now WORK; normal
-signed commits and git push originmain have succeeded. Do not change global
-signing/account settings. There is no need to use unsigned/API commit fallback.
-
-Tracker helper `/tmp/turnsmith-tracker.py`, initialstate
-`/tmp/turnsmith-roadmap-state.json`, WCA tickets `/tmp/turnsmith-wca-tickets.json`.
-Archive checker `/tmp/turnsmith-check-archives.py` needs update for two binaries
-and extra corresponding-source archive/checksum. PTY script
-`/tmp/turnsmith-pty-integration.py` uses /tmp/turnsmith-integration and legacy
-expectations requiring adjustment when timing defaultWCAseed42. Existing
-`docs/verification-0.3.0.md` describes baselinePTY checks, not newWCAdefaults.
-
-MITcopyright2026FranciscoRivasandcontributors remains for originalcode. No cloud,
-BLE, curated copyrighted datasets or official competition certification scope.
+GitHub repository writes use `frivas`; the default active account remains
+`frivas-at-navteca`. Use a process-scoped frivas credential for gh commands,
+never print or save it. Signed Git commits and SSH pushes work. Do not alter
+global account or signing settings. A valid SemVer tag automatically runs CI,
+packages both binaries for all six targets and publishes the complete release.

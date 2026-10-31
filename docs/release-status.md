@@ -1,5 +1,10 @@
 # Release work and improvement status
 
+[v0.3.0](https://github.com/frivas/turnsmith/releases/tag/v0.3.0) is published and
+both verified Mac binaries are installed. All native CI, downloaded-package and
+corresponding-source checks passed; the terminal roadmap map and all children
+are closed. See [final verification](verification-0.3.0.md).
+
 The terminal practice extension is tracked in
 [Deliver the complete terminal practice roadmap](https://github.com/frivas/turnsmith/issues/8).
 The v0.3.0 changelog and README cover its implementation. The first-release record

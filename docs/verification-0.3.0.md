@@ -56,3 +56,22 @@ rotations. Coordinate, symmetry, pruning, cancellation, bounded failure,
 concurrent generation, exact entropy-word forwarding and process cleanup checks
 are separate from the statistical uniformity argument. Source attribution,
 licensing and generation rules are recorded in the WCA research documents.
+
+## Published release and Mac installation
+
+The final source is `6d8dd8979ce429d21a7fac45278ea5bf6ff00f72`.
+[Native CI](https://github.com/frivas/turnsmith/actions/runs/41229226857) and the
+[actual release workflow](https://github.com/frivas/turnsmith/actions/runs/41229421613)
+passed on all three operating systems. [v0.3.0](https://github.com/frivas/turnsmith/releases/tag/v0.3.0)
+is public with all nine expected assets.
+
+Every published archive was downloaded and checked against SHA256SUMS. Contents,
+licenses, changelog, executable permissions, both OS/CPU headers and Go build
+metadata were checked for all six platforms. Both commands built offline from
+the downloaded corresponding-source archive and generated a 4x4 scramble.
+Public versioned Go installs of both commands succeeded and worked together.
+
+Both published Mac ARM64 executables are installed in `~/.local/bin`, match the
+downloaded bytes, report v0.3.0 and the tagged source commit, and pass installed
+222/333/444 WCA-style generation. The previous executable was backed up before
+atomic replacement. All Wayfinder implementation and release tickets are closed.
