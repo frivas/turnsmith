@@ -193,6 +193,9 @@ func (p *parser) sequence(stops string, depth int) ([]Move, error) {
 			p.pos++
 			lower := strings.ContainsRune("udlrfb", c)
 			if lower {
+				if width != 1 {
+					return nil, p.error("numeric width requires an uppercase face with w suffix")
+				}
 				c = unicode.ToUpper(c)
 				width = 2
 			}

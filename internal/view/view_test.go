@@ -49,3 +49,18 @@ func TestFinalOnlyAndColor(t *testing.T) {
 		}
 	}
 }
+
+func TestResizeDoesNotRepeatMove(t *testing.T) {
+	moves, err := alg.Parse("R U", 10)
+	if err != nil {
+		t.Fatal(err)
+	}
+	states, err := cubestate.Replay(3, moves)
+	if err != nil {
+		t.Fatal(err)
+	}
+	frame := Frame(states, moves, 1, 80, 40, "resize", Options{})
+	if strings.Contains(frame, "Apply:") || !strings.Contains(frame, "Current state; no turns") {
+		t.Fatal(frame)
+	}
+}

@@ -29,3 +29,15 @@ func TestInverse(t *testing.T) {
 		t.Fatal("inverse roundtrip")
 	}
 }
+
+func TestNumericLowercaseWidthRejected(t *testing.T) {
+	for _, input := range []string{"2r", "3r", "3rw", "2u2", "4fw'"} {
+		if _, err := Parse(input, 100); err == nil {
+			t.Fatalf("accepted ambiguous width %q", input)
+		}
+	}
+	moves, err := Parse("3Rw 2Uw2", 100)
+	if err != nil || Format(moves) != "3Rw Uw2" {
+		t.Fatal(Format(moves), err)
+	}
+}

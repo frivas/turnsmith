@@ -137,7 +137,7 @@ func (c CLI) readSequences(o commandOptions) (sequenceInput, error) {
 		result.Puzzle, result.Seed, result.Method, result.AlgorithmVersion, result.AppVersion = batch.Puzzle, batch.Seed, batch.Method, batch.AlgorithmVersion, batch.AppVersion
 		total := 0
 		for i, item := range batch.Scrambles {
-			if item.Index != i+1 || item.MoveCount != len(item.Moves) || strings.Join(item.Moves, " ") != item.Sequence {
+			if len(item.Moves) == 0 || len(item.Moves) > 10000 || item.Index != i+1 || item.MoveCount != len(item.Moves) || strings.Join(item.Moves, " ") != item.Sequence {
 				return result, app.Invalid("saved scramble %d has inconsistent index/moves/sequence", i+1)
 			}
 			total += item.MoveCount
@@ -247,6 +247,12 @@ func (c CLI) sequenceCommand(ctx context.Context, name string, args []string, w 
 	if o.yes("help") {
 		return commandHelp(w, name)
 	}
+	if name == "inverse" && (o.seen["steps"] || o.seen["diagram"] || o.seen["color"] || o.seen["color-depth"]) {
+		return app.Invalid("inverse does not support display flags; use inspect for diagrams")
+	}
+	if name == "guide" && !o.hasSequence() && o.seen["index"] {
+		return app.Invalid("--index requires saved or supplied input")
+	}
 	if o.yes("steps") && o.yes("diagram") {
 		return app.Invalid("choose --steps or --diagram")
 	}
@@ -275,6 +281,15 @@ func (c CLI) sequenceCommand(ctx context.Context, name string, args []string, w 
 	}
 	if e != nil {
 		return e
+	}
+	if o.yes("steps") {
+		total := 0
+		for _, moves := range input.Sequences {
+			total += len(moves)
+		}
+		if total > 1000 {
+			return app.Invalid("--steps supports at most 1000 total moves; select --index or inspect without --steps")
+		}
 	}
 	style, e := c.viewOptions(o)
 	if e != nil {
@@ -309,8 +324,11 @@ func (c CLI) sequenceCommand(ctx context.Context, name string, args []string, w 
 	if o.yes("json") {
 		if name == "inverse" {
 			for i := range doc.Sequences {
-				moves, _ := alg.Parse(doc.Sequences[i].Inverse, 1000)
-				states, _ := cubestate.Replay(size, moves)
+				moves := alg.Inverse(input.Sequences[i])
+				states, err := cubestate.Replay(size, moves)
+				if err != nil {
+					return invalid(err)
+				}
 				state := states[len(states)-1]
 				doc.Sequences[i] = inspectionRecord{Index: i + 1, Moves: alg.Tokens(moves), Sequence: alg.Format(moves), MoveCount: len(moves), Inverse: alg.Format(alg.Inverse(moves)), Facelets: state.Facelets(), Solved: state.Solved()}
 			}

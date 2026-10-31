@@ -171,6 +171,8 @@ func Frame(states []cubestate.State, moves []alg.Move, index, width, height int,
 	instruction := "Start solved."
 	if action == "previous" && index < len(moves) {
 		instruction = "Undo: " + moves[index].Inverse().String()
+	} else if action == "resize" {
+		instruction = "Current state; no turns"
 	} else if action == "reset" {
 		instruction = "Reset: solve cube"
 	} else if action == "end" {
