@@ -21,17 +21,22 @@ type StepRenderer interface {
 }
 
 type CLI struct {
-	Service app.Service
-	Build   Build
-	Guides  map[string]StepRenderer
-	Color   bool
+	Service    app.Service
+	Build      Build
+	Guides     map[string]StepRenderer
+	Color      bool
+	Input      io.Reader
+	ColorDepth string
 }
 
-const help = `turnsmith generates filtered random-move scrambles for casual practice.
+const help = `turnsmith provides reproducible cube scrambles and local terminal practice.
 
 Usage:
   turnsmith [flags]
   turnsmith puzzles [--json]
+  turnsmith inspect|inverse|guide [flags]
+  turnsmith sessions|timer|train|daily [flags]
+  turnsmith completion bash|zsh|fish|powershell
   turnsmith version
   turnsmith help
 
@@ -42,14 +47,18 @@ Generation flags:
   -n, --count N      Scrambles (default 1; range 1..10000)
       --seed N       Unsigned decimal 64-bit root seed (including zero)
       --json         Emit a versioned JSON document
-      --steps        Show a solved cube and each move as a tile diagram (333)
+      --steps        Show a solved cube and each move as a tile diagram
+      --diagram      Show only the final cube state
+      --color-depth N Color depth: auto, 16, 256, truecolor
       --color MODE   Diagram colors: auto, always, never (default auto)
   -h, --help         Show help
       --version      Print name and version
 
 At most 1000000 total moves may be requested.
 Step diagrams support at most 1000 total moves and cannot be combined with JSON.
-Notation: U D L R F B, optionally followed by 2 or an ASCII apostrophe.
+Run a command with --help for its options. 222 supports random-state;
+333 supports random-move and random-state; 444 supports random-move.
+Notation includes outer turns and wide turns for 444.
 A half turn counts as one token. Random moves do not uniformly sample states
 and are not approved for official competition. No runtime network access.
 `
@@ -59,8 +68,8 @@ type parsed struct {
 	command             string
 	request             app.Request
 	json, help, version bool
-	steps               bool
-	color               string
+	steps, diagram      bool
+	color, depth        string
 }
 
 func integer(value, flag string, max int) (int, error) {
@@ -80,7 +89,7 @@ func integer(value, flag string, max int) (int, error) {
 	return int(n), nil
 }
 func parse(args []string) (parsed, error) {
-	p := parsed{command: "generate", request: app.Request{Puzzle: "333", Count: 1}, color: "auto"}
+	p := parsed{command: "generate", request: app.Request{Puzzle: "333", Count: 1}, color: "auto", depth: "auto"}
 	if len(args) > 0 && !strings.HasPrefix(args[0], "-") {
 		switch args[0] {
 		case "puzzles", "version", "help":
@@ -107,7 +116,7 @@ func parse(args []string) (parsed, error) {
 		case "-h":
 			key = "--help"
 		}
-		allowed := key == "--help" || (p.command == "puzzles" && key == "--json") || (p.command == "generate" && (key == "--puzzle" || key == "--method" || key == "--length" || key == "--count" || key == "--seed" || key == "--json" || key == "--version" || key == "--steps" || key == "--color"))
+		allowed := key == "--help" || (p.command == "puzzles" && key == "--json") || (p.command == "generate" && (key == "--puzzle" || key == "--method" || key == "--length" || key == "--count" || key == "--seed" || key == "--json" || key == "--version" || key == "--steps" || key == "--diagram" || key == "--color-depth" || key == "--color"))
 		if !allowed {
 			return p, app.Invalid("unknown flag %q for %s; run \"turnsmith help\"", key, p.command)
 		}
@@ -115,7 +124,7 @@ func parse(args []string) (parsed, error) {
 			return p, app.Invalid("flag %s supplied more than once", key)
 		}
 		seen[key] = true
-		boolean := key == "--json" || key == "--help" || key == "--version" || key == "--steps"
+		boolean := key == "--json" || key == "--help" || key == "--version" || key == "--steps" || key == "--diagram"
 		if boolean {
 			b := true
 			if hasValue {
@@ -133,6 +142,8 @@ func parse(args []string) (parsed, error) {
 				p.version = b
 			case "--steps":
 				p.steps = b
+			case "--diagram":
+				p.diagram = b
 			}
 			continue
 		}
@@ -172,6 +183,11 @@ func parse(args []string) (parsed, error) {
 				return p, app.Invalid("%s", err)
 			}
 			p.request.Seed = &n
+		case "--color-depth":
+			if value != "auto" && value != "16" && value != "256" && value != "truecolor" {
+				return p, app.Invalid("--color-depth must be auto, 16, 256, or truecolor")
+			}
+			p.depth = value
 		case "--color":
 			if value != "auto" && value != "always" && value != "never" {
 				return p, app.Invalid("--color must be auto, always, or never")
@@ -182,11 +198,14 @@ func parse(args []string) (parsed, error) {
 	if p.version && (p.help || len(seen) > 1) {
 		return p, app.Invalid("--version cannot be combined with other flags")
 	}
-	if p.steps && p.json {
+	if p.steps && p.diagram {
+		return p, app.Invalid("choose --steps or --diagram")
+	}
+	if (p.steps || p.diagram) && p.json {
 		return p, app.Invalid("--steps cannot be combined with --json")
 	}
-	if seen["--color"] && !p.steps {
-		return p, app.Invalid("--color requires --steps")
+	if (seen["--color"] || seen["--color-depth"]) && !p.steps && !p.diagram {
+		return p, app.Invalid("--color and --color-depth require --steps or --diagram")
 	}
 	return p, nil
 }
@@ -207,6 +226,21 @@ func (c CLI) Run(ctx context.Context, args []string, stdout, stderr io.Writer) i
 	return code
 }
 func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if len(args) > 0 {
+		switch args[0] {
+		case "inspect", "inverse", "guide", "sessions", "timer", "train", "daily", "completion":
+			return c.extended(ctx, args[0], args[1:], w)
+		}
+		if args[0] == "help" && len(args) == 2 {
+			switch args[1] {
+			case "inspect", "inverse", "guide", "sessions", "timer", "train", "daily", "completion":
+				return commandHelp(w, args[1])
+			}
+		}
+	}
 	p, err := parse(args)
 	if err != nil {
 		return err
@@ -244,7 +278,7 @@ func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
 		}
 	} else {
 		var guide StepRenderer
-		if p.steps {
+		if p.steps || p.diagram {
 			descriptor, ok := c.Service.Registry.Resolve(p.request.Puzzle)
 			if !ok {
 				return app.Invalid("unsupported puzzle %q; run \"turnsmith puzzles\" to list supported puzzles", p.request.Puzzle)
@@ -258,7 +292,7 @@ func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
 		if e != nil {
 			return e
 		}
-		if p.steps {
+		if p.steps || p.diagram {
 			total := 0
 			for _, scramble := range result.Scrambles {
 				total += scramble.MoveCount
@@ -271,7 +305,20 @@ func (c CLI) run(ctx context.Context, args []string, w io.Writer) error {
 				if err = write(fmt.Sprintf("Scramble %d/%d | seed %s\n%s\n\n", scramble.Index, len(result.Scrambles), result.Seed, scramble.Sequence)); err != nil {
 					return err
 				}
-				if err = guide.Render(ctx, w, scramble.Moves, color); err != nil {
+				if rich, ok := guide.(interface {
+					RenderView(context.Context, io.Writer, []string, bool, string, bool) error
+				}); ok {
+					depth := p.depth
+					if depth == "auto" {
+						depth = c.ColorDepth
+					}
+					err = rich.RenderView(ctx, w, scramble.Moves, color, depth, p.diagram)
+				} else if p.diagram {
+					return app.Invalid("final diagrams unavailable for this puzzle")
+				} else {
+					err = guide.Render(ctx, w, scramble.Moves, color)
+				}
+				if err != nil {
 					return fmt.Errorf("write step diagrams: %w", err)
 				}
 			}

@@ -1,6 +1,6 @@
 # Architecture
 
-The first release uses the Go standard library only. Generation is synchronous,
+Generation is synchronous,
 offline, and local to each call. Puzzle and method are separate: `333` describes
 a puzzle, and `random-move` describes an available method for it.
 
@@ -27,7 +27,8 @@ A generator failure discards the batch. Output writers can still fail midway
 through serialization; this returns status 1 with useful context where stderr
 is writable. Context cancellation propagates as status 130. The executable
 handles Ctrl-C through `signal.NotifyContext`. All loops over moves and batch
-members check cancellation. No runtime shell commands or file reads are used.
+members check cancellation. Generation uses no runtime shell commands or external table files. Explicit
+sequence imports and session/training modes read user-selected or local data.
 
 Registration is explicit in `main`, with no init functions or mutable generation
 globals. Registry maps are private, descriptors are copied in and out including
@@ -92,3 +93,22 @@ from [cubejs 1.3.2](https://github.com/ldez/cubejs), checked in URFDLB facelet o
 The fixtures cover all 18 single moves, all prefixes of the seed-42 scramble, and
 noncommuting sequences. This reference was used only to produce test data; it is
 not a runtime, Go-module, or CI dependency.
+
+## Terminal practice extension
+
+`alg` parses bounded sequences. `cubestate` independently simulates supported
+cube sizes, and `view` renders their nets. `terminal` adapts tcell events and
+restores terminal state. Their state never feeds back into legacy random-move
+generation. The original cube333 model and reference fixtures remain an
+independent check for the generalized model and random-state engine.
+
+`randomstate` uses pinned native gocube transitions/tables with caller-local
+sampling and bounded search. `cube444` is a separate random-move registration.
+`daily` derives versioned UTC practice seeds through the ordinary app service.
+`practice` owns solves/sessions; `training` owns case progress. Both stores use
+separate versioned files, cross-process locks, atomic replacement, validated
+backups and explicit recovery. No persistent write occurs in default generation.
+The CLI owns interactive state machines and command-specific presentation.
+
+Third-party Go dependencies are compiled into the executable. There is no
+runtime JavaScript, Java, external solver process or network requirement.

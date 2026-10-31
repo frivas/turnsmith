@@ -1,6 +1,7 @@
 # Release wayfinding
 
-The canonical plan is [Map the route to Turnsmith's first public release](https://github.com/frivas/turnsmith/issues/1).
+The current execution map is [Deliver the complete terminal practice roadmap](https://github.com/frivas/turnsmith/issues/8).
+The historical first-release map is [Map the route to Turnsmith's first public release](https://github.com/frivas/turnsmith/issues/1).
 Decisions and their evidence live in GitHub Issues. This document explains how
 to continue the map; it does not duplicate ticket answers.
 

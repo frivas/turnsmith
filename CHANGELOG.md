@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.0 - 2026-10-31
+
+- Interactive Next/Back cube guidance with inverse undo moves and compact final diagrams.
+- Algorithm import, inspection and inversion, including saved JSON, wide/slice moves, rotations, groups, commutators and conjugates.
+- Portable terminal input, resize handling, color depth options and Bash/Zsh/Fish/PowerShell completions.
+- Local solve sessions, press-based timing, inspection, penalties, notes, averages and JSON/CSV import/export with backups and recovery.
+- User-owned algorithm drills with inverse setups, hints, learning status and balanced/learning/slow-case selection.
+- Native 333 random-state, 222 random-state and 444 wide-turn random-move generators. Existing 333 random-move seeds remain unchanged.
+- Named daily/shared practice sets with UTC dates, versioned seeds and replayable manifests.
+
+
 Release downloads and the full commit-by-commit notes are available on
 [GitHub Releases](https://github.com/frivas/turnsmith/releases).
 

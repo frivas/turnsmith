@@ -29,7 +29,7 @@ func main() {
 	}
 }
 func run() error {
-	version := flag.String("version", "0.2.0-dev", "semantic version without v")
+	version := flag.String("version", "0.3.0-dev", "semantic version without v")
 	commit := flag.String("commit", "unknown", "Git commit or unknown")
 	date := flag.String("date", "", "RFC3339 build date; defaults to current UTC time")
 	out := flag.String("out", "dist", "output directory")
@@ -127,6 +127,9 @@ func archive(path, executable, binary, changelog string, timestamp time.Time, wi
 		mode       int64
 	}
 	assets := []asset{{executable, binary, 0755}, {"README.md", "README.md", 0644}, {"LICENSE", "LICENSE", 0644}, {"THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md", 0644}, {"docs/cube-orientation.svg", "docs/cube-orientation.svg", 0644}}
+	for _, path := range []string{"docs/terminal.md", "docs/training.md", "docs/sessions.md", "docs/daily-practice.md", "docs/research/random-state-engine.md"} {
+		assets = append(assets, asset{path, path, 0644})
+	}
 	if changelog != "" {
 		assets = append(assets, asset{"CHANGELOG.md", changelog, 0644})
 	}

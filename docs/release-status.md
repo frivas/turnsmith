@@ -1,5 +1,10 @@
 # Release work and improvement status
 
+The terminal practice extension is tracked in
+[Deliver the complete terminal practice roadmap](https://github.com/frivas/turnsmith/issues/8).
+The v0.3.0 changelog and README cover its implementation. The first-release record
+below is historical; its scope exclusions do not describe the newer release.
+
 Checked 2026-10-30 against the handoff, source, and GitHub ticket discussion.
 The handoff contains no separate list of another assistant's suggested
 improvements. This is the status of the items it actually identifies; it does

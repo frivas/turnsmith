@@ -25,9 +25,15 @@ func TestExecutable(t *testing.T) {
 		status int
 	}{
 		{nil, 0}, {[]string{"--seed", "42", "--json"}, 0}, {[]string{"--version"}, 0}, {[]string{"version"}, 0}, {[]string{"help"}, 0}, {[]string{"puzzles", "--json"}, 0},
-		{[]string{"--seed", "-1"}, 2}, {[]string{"--puzzle", "444"}, 2},
+		{[]string{"--seed", "-1"}, 2}, {[]string{"--puzzle", "555"}, 2},
 		{[]string{"--steps", "--seed", "42", "--length", "3", "--color", "never"}, 0},
 		{[]string{"--steps", "--json"}, 2},
+		{[]string{"--puzzle", "222", "--seed", "42", "--json"}, 0},
+		{[]string{"--puzzle", "444", "--seed", "42", "--diagram"}, 0},
+		{[]string{"--method", "random-state", "--seed", "42", "--json"}, 0},
+		{[]string{"inspect", "--alg", "[R,U]", "--json"}, 0},
+		{[]string{"inverse", "--alg", "R U"}, 0},
+		{[]string{"guide", "--seed", "42"}, 2},
 	} {
 		command := exec.Command(binary, tc.args...)
 		var out, stderr bytes.Buffer

@@ -5,36 +5,37 @@
 Offline Rubik's Cube scrambles in a single executable. Run `turnsmith` to print
 25 moves for casual 3×3×3 practice, with no headings or extra output.
 
-Only **333 / random-move** is implemented. This method filters simple redundant
-moves. It does **not** uniformly sample reachable cube states and is **not**
-approved for official competition. The 25-move default is a product choice,
-not a competition standard.
+Choose 333 random-move or random-state, 222 random-state, or 444 random-move.
+Inspect supplied algorithms, follow an interactive colored guide, time solves in
+local sessions, and practice your own algorithm collections. Every mode runs
+offline. The default stays 25 random outer moves with no headings or saved data.
+None of the generators is approved for official competition.
 
 ## Installation
 
 Download a compiled executable from [GitHub Releases](https://github.com/frivas/turnsmith/releases/latest).
 No Go installation is required. Once installed, `turnsmith` runs offline.
 
-The v0.2.0 downloads are:
+The v0.3.0 downloads are:
 
 | Platform | Architecture | Download |
 | --- | --- | --- |
-| macOS | Apple Silicon, ARM64 | [darwin_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_darwin_arm64.tar.gz) |
-| macOS | Intel, AMD64 | [darwin_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_darwin_amd64.tar.gz) |
-| Linux | ARM64 | [linux_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_linux_arm64.tar.gz) |
-| Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_linux_amd64.tar.gz) |
-| Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_windows_arm64.zip) |
-| Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.2.0/turnsmith_0.2.0_windows_amd64.zip) |
+| macOS | Apple Silicon, ARM64 | [darwin_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_darwin_arm64.tar.gz) |
+| macOS | Intel, AMD64 | [darwin_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_darwin_amd64.tar.gz) |
+| Linux | ARM64 | [linux_arm64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_linux_arm64.tar.gz) |
+| Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_linux_amd64.tar.gz) |
+| Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_windows_arm64.zip) |
+| Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_windows_amd64.zip) |
 
 ### macOS and Linux
 
-This downloads v0.2.0 for your machine, checks its SHA-256, and installs it in
+This downloads v0.3.0 for your machine, checks its SHA-256, and installs it in
 `~/.local/bin`. Change `version` to install another published release.
 
 ```sh
 (
   set -eu
-  version=0.2.0
+  version=0.3.0
   case "$(uname -s)" in
     Darwin) os=darwin ;;
     Linux) os=linux ;;
@@ -69,8 +70,8 @@ then open a new terminal. Verify the installation with `turnsmith --version`.
 
 ### Windows
 
-Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.2.0/SHA256SUMS).
-In PowerShell, run `Get-FileHash .\turnsmith_0.2.0_windows_amd64.zip -Algorithm SHA256`,
+Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.3.0/SHA256SUMS).
+In PowerShell, run `Get-FileHash .\turnsmith_0.3.0_windows_amd64.zip -Algorithm SHA256`,
 using your downloaded filename, and compare it with the matching line in
 `SHA256SUMS`. Extract the ZIP, put `turnsmith.exe` in a folder on your PATH, and
 run `turnsmith --version` in a new terminal.
@@ -83,11 +84,11 @@ available. See [releasing](docs/releasing.md) for the current signing status.
 If you have Go 1.27 or later:
 
 ```sh
-go install github.com/frivas/turnsmith/cmd/turnsmith@v0.2.0
+go install github.com/frivas/turnsmith/cmd/turnsmith@v0.3.0
 ```
 
 Go installs to `GOBIN`, or `$(go env GOPATH)/bin` when `GOBIN` is unset. Add that
-directory to your PATH. Use `@latest` instead of `@v0.2.0` for the latest stable
+directory to your PATH. Use `@latest` instead of `@v0.3.0` for the latest stable
 Go module version.
 
 ### Build from source
@@ -105,10 +106,10 @@ On Windows, build with `-o bin/turnsmith.exe` and run `.\bin\turnsmith.exe`.
 
 Read the [changelog](CHANGELOG.md) or browse [release downloads](https://github.com/frivas/turnsmith/releases).
 
-Push a SemVer tag such as `v0.2.0` to run native CI and automatically publish a
+Push a SemVer tag such as `v0.3.0` to run native CI and automatically publish a
 GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
 and ARM64. Each release includes its Git changelog, download links, and SHA-256
-checksums. Prerelease tags such as `v0.2.0-rc.1` create GitHub prereleases.
+checksums. Prerelease tags such as `v0.3.0-rc.1` create GitHub prereleases.
 
 The Release workflow also supports manual previews that build and upload the
 same artifacts without tagging or publishing. See [releasing](docs/releasing.md)
@@ -130,7 +131,7 @@ turnsmith --version
 turnsmith help
 ```
 
-Aliases `3x3` and `3x3x3` select `333`. Unsupported identifiers, including `444`,
+Aliases such as `2x2`, `3x3x3`, and `4x4` select their canonical puzzle. Unsupported identifiers
 fail without substituting another puzzle. Successful text output is one sequence
 per line, single ASCII spaces, no numbering, wrapping, ANSI codes, or metadata,
 and a final newline. Batches are generated completely before output starts.
@@ -139,21 +140,23 @@ and a final newline. Batches are generated completely before output starts.
 
 | Flag | Short | Default | Allowed values |
 | --- | --- | --- | --- |
-| `--puzzle` | `-p` | `333` | `333`, `3x3`, `3x3x3` |
-| `--method` | | Puzzle default | `random-move` for 333 |
-| `--length` | `-l` | `25` | Decimal integer 1–1000 |
+| `--puzzle` | `-p` | `333` | `222`, `333`, `444` and their NxN/NxNxN aliases |
+| `--method` | | Puzzle default | `random-move` for 333/444, `random-state` for 222; 333 also supports `random-state` |
+| `--length` | `-l` | 25 for 333, 40 for 444 | Decimal integer 1–1000; unavailable for random-state |
 | `--count` | `-n` | `1` | Decimal integer 1–10000 |
 | `--seed` | | OS entropy | Unsigned decimal 64-bit integer |
 | `--json` | | `false` | Boolean |
 | `--steps` | | `false` | Show initial and per-move cube diagrams |
-| `--color` | | `auto` | `auto`, `always`, `never`; requires `--steps` |
+| `--diagram` | | `false` | Show only the final cube state |
+| `--color` | | `auto` | `auto`, `always`, `never`; requires diagrams |
+| `--color-depth` | | `auto` | `auto`, `16`, `256`, `truecolor` |
 | `--help` | `-h` | | Show help |
 | `--version` | | | Name and version only |
 
 Use `--flag value`, `--flag=value`, or short equivalents such as `-l 30`.
 Boolean flags accept `=true` or `=false`. Repeated flags, short-flag bundles,
 positionals, and unknown flags are rejected. `puzzles` accepts only `--json`
-and help; `version` accepts help; `help` takes no positional arguments.
+and help; `version` accepts help; `help COMMAND` shows command-specific options.
 `--version` cannot be combined with other flags. A request may contain at most
 1,000,000 moves. Errors go to stderr with `error:` and no scramble output for
 invalid requests. Exit codes: 0 success, 1 runtime or output failure, 2 invalid
@@ -204,17 +207,86 @@ and cannot be combined with `--json`. Default text and JSON generation do not
 include diagrams. The state simulator is used only for displaying these steps;
 it does not change the generator or its reproducibility contract.
 
+## Interactive guide and supplied sequences
+
+```sh
+turnsmith guide --seed 42
+turnsmith guide --alg "R U R' U'"
+turnsmith inspect --alg "[R,U]" --steps
+turnsmith inverse --alg "(R U R' U')3"
+turnsmith --seed 42 --diagram
+turnsmith --seed 42 --count 5 --json > scrambles.json
+turnsmith guide --file scrambles.json --index 2
+cat scrambles.json | turnsmith inspect --stdin --index 2 --json
+```
+
+The guide keeps one colored cube on screen. Right/Space/Enter advances, Left
+shows the inverse move to undo, Home resets the displayed progress, and q exits.
+A reset or jump changes the display only. Follow the displayed physical-cube
+instructions before continuing. `inspect` accepts one quoted argument, `--alg`,
+`--file`, or stdin, including saved generation, inspection, and daily-set JSON.
+All imported moves replay from solved; arbitrary sticker layouts are unsupported.
+See [terminal controls and completions](docs/terminal.md).
+
+## Timer, sessions and algorithm practice
+
+```sh
+turnsmith timer --session practice --inspection 15
+turnsmith sessions show practice
+turnsmith sessions add practice --time 12.345 --penalty +2 --notes "missed AUF"
+turnsmith sessions export --format csv --file times.csv
+turnsmith sessions import --format csv --file times.csv
+turnsmith train --file my-cases.json --mode slowest
+turnsmith daily --date 2026-10-31 --name weekend --count 10 --output weekend.json
+turnsmith guide --file weekend.json --index 1
+```
+
+Timing uses Space/Enter presses and a monotonic clock. It does not require key
+release support. `2`, `d`, and `0` edit a saved solve's penalty. Sessions report
+best/worst singles, ao5 and ao12, including +2 and DNF handling. Notes, editing,
+JSON/CSV backup and explicit recovery are available through `sessions --help`.
+Interactive modes require terminal stdin and stdout; streamed inspection works
+in pipes. Only explicit session/training commands write local practice data.
+
+Training cases are your own JSON collection. Each case has an inverse setup,
+hint reveal, timed repetitions, new/learning/known status and balanced, learning,
+slowest or sequential selection. See [training format and controls](docs/training.md),
+[session storage and recovery](docs/sessions.md), and
+[daily practice sets](docs/daily-practice.md). Import/export supports Turnsmith's
+versioned formats; third-party timer exports require conversion.
+
+## Random-state methods and puzzle coverage
+
+```sh
+turnsmith --puzzle 222 --seed 42
+turnsmith --puzzle 333 --method random-state --seed 42 --diagram
+turnsmith --puzzle 444 --seed 42 --steps
+```
+
+333 random-state samples reachable cubie states and constructs scrambles with a
+bounded two-phase solver. Search exhaustion returns an error rather than
+resampling an easier state. 222 samples uniformly modulo whole-cube orientation,
+with a fixed corner, and uses a complete distance table. Random-state methods
+choose their own move counts and reject `--length`. Tables initialize locally
+on first use. 444 remains explicitly random-move, with no uniform-state claim.
+The [engine decision and independent validation](docs/research/random-state-engine.md)
+record distributions, bounds, measurements and dependency licenses.
+
 ## Notation and algorithm
 
 Outer faces are `U D L R F B`. A bare letter means a clockwise quarter turn
 when looking directly at that face. `2` means a half turn; a straight ASCII
 apostrophe means a counterclockwise quarter turn. `R`, `R2`, and `R'` each count
-as one token. Rotations, slices, lowercase, and wide moves are not generated.
+as one token. 333 random-move uses outer turns only. 444 random-move also generates two-layer
+wide turns such as `Rw`. Inspection supports `M E S`, `x y z`, wide turns and
+lowercase wide aliases, groups `(R U)3`, commutators `[R,U]` and conjugates `[R:U]`.
+Invalid moves for a puzzle fail before diagram output. Slices require odd-sized
+cubes; on 222 use outer turns and whole-cube rotations.
 
-Adjacent moves cannot use the same face. A face cannot repeat across its
+In the random-move methods, adjacent moves cannot use the same face. A face cannot repeat across its
 opposite face, so `R L R'`, `U D2 U2`, and `F B F` are excluded. Opposite-face
 pairs such as `R L` remain legal. The generator selects directly from valid
-faces in a fixed order; it has no simulator or visited-state history.
+faces in a fixed order; it has no visited-state history.
 Uniform next-move selection does not imply uniform state sampling.
 
 See [algorithms](docs/algorithms.md) for the exact ordering and selection rules.
@@ -241,7 +313,7 @@ timestamps or host paths. Inapplicable lengths can be omitted by future methods.
 ```json
 {
   "schema_version": 1,
-  "app_version": "0.2.0",
+  "app_version": "0.3.0",
   "puzzle": "333",
   "method": "random-move",
   "algorithm_version": "1",
@@ -267,16 +339,16 @@ Run `gofmt -w cmd internal scripts` before contributing. Changes should include
 tests of observable behavior. Golden vector changes require an explanation and
 an algorithm-version decision. CI runs integration tests on macOS, Linux, and
 Windows, with race and short fuzz checks on Linux. Benchmarks have no hardware
-thresholds. No external module downloads are required to build or test.
+thresholds. Building from source downloads the pinned Go modules. Release binaries
+include their native code and need no runtime downloads.
 
 See [architecture](docs/architecture.md), [adding a puzzle](docs/adding-a-puzzle.md),
-and [releasing](docs/releasing.md). Solvers, timers, history, telemetry,
-plugins, configuration files, and other working puzzles are outside v0.2.0.
+and [releasing](docs/releasing.md). Cloud accounts, telemetry, Bluetooth hardware,
+curated third-party training datasets and 3D graphics are outside this release.
 Implementation packages are internal; there is no stable public Go API.
 
 ## License and attribution
 
 [MIT](LICENSE), copyright Francisco Rivas and contributors.
-[Third-party notices](THIRD_PARTY_NOTICES.md) credit Go and PCG. This is an
-independent implementation of the provided specification, with no copied
-scrambler code.
+[Third-party notices](THIRD_PARTY_NOTICES.md) include Go, PCG, the BSD-licensed
+gocube transitions/tables, and the permissively licensed terminal dependencies.
