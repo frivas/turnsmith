@@ -69,7 +69,8 @@ func SourceArchive(repoDir, outPath, commit string, timestamp time.Time) error {
 	if e != nil {
 		return e
 	}
-	extractErr := extractSourceTree(snapshot, tree)
+	executable := map[string]bool{}
+	extractErr := extractSourceTreeModes(snapshot, tree, executable)
 	closeErr = snapshot.Close()
 	if extractErr != nil {
 		return extractErr
@@ -89,10 +90,14 @@ func SourceArchive(repoDir, outPath, commit string, timestamp time.Time) error {
 	if e = os.WriteFile(filepath.Join(tree, "SOURCE_COMMIT"), []byte(revision+"\n"), 0644); e != nil {
 		return e
 	}
-	return archiveSourceTree(tree, outPath, timestamp)
+	return archiveSourceTree(tree, outPath, timestamp, executable)
 }
 
 func extractSourceTree(reader io.Reader, root string) error {
+	return extractSourceTreeModes(reader, root, nil)
+}
+
+func extractSourceTreeModes(reader io.Reader, root string, executable map[string]bool) error {
 	tr := tar.NewReader(reader)
 	for {
 		header, e := tr.Next()
@@ -126,6 +131,9 @@ func extractSourceTree(reader io.Reader, root string) error {
 			if e = os.MkdirAll(filepath.Dir(target), 0755); e != nil {
 				return e
 			}
+			if executable != nil {
+				executable[clean] = header.Mode&0111 != 0
+			}
 			mode := os.FileMode(0644)
 			if header.Mode&0111 != 0 {
 				mode = 0755
@@ -148,7 +156,7 @@ func extractSourceTree(reader io.Reader, root string) error {
 	}
 }
 
-func archiveSourceTree(tree, outPath string, timestamp time.Time) (err error) {
+func archiveSourceTree(tree, outPath string, timestamp time.Time, executable map[string]bool) (err error) {
 	var paths []string
 	if err = filepath.WalkDir(tree, func(name string, entry os.DirEntry, walkErr error) error {
 		if walkErr != nil {
@@ -203,7 +211,7 @@ func archiveSourceTree(tree, outPath string, timestamp time.Time) (err error) {
 			size = 0
 		} else if !info.Mode().IsRegular() {
 			return fmt.Errorf("unsupported source file %q", name)
-		} else if info.Mode()&0111 != 0 {
+		} else if executable[filepath.ToSlash(relative)] || info.Mode()&0111 != 0 {
 			mode = 0755
 		}
 		header := &tar.Header{Name: archiveName, Mode: mode, Typeflag: kind, Size: size, ModTime: timestamp, Format: tar.FormatPAX}

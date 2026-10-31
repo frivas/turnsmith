@@ -50,6 +50,7 @@ func sourceFixture(t *testing.T) (string, string) {
 		t.Fatal(e)
 	}
 	sourceCommand(t, dir, "add", ".")
+	sourceCommand(t, dir, "update-index", "--chmod=+x", "run.sh")
 	sourceCommand(t, dir, "-c", "user.name=Source Fixture", "-c", "user.email=fixture@example.test", "commit", "-qm", "fixture")
 	return dir, sourceCommand(t, dir, "rev-parse", "HEAD")
 }
@@ -203,5 +204,37 @@ func TestExtractSourceTreeRejectsUnsafeEntries(t *testing.T) {
 				t.Fatal("unsafe archive entry accepted", tc)
 			}
 		})
+	}
+}
+
+// Windows does not expose Unix executable bits through os.Stat. Preserve the
+// authoritative mode from Git's tar headers even when the staging FS loses it.
+func TestSourceArchivePreservesGitModeWithoutFilesystemExecBits(t *testing.T) {
+	var snapshot bytes.Buffer
+	writer := tar.NewWriter(&snapshot)
+	if e := writer.WriteHeader(&tar.Header{Name: "run.sh", Mode: 0755, Size: 2, Typeflag: tar.TypeReg}); e != nil {
+		t.Fatal(e)
+	}
+	if _, e := writer.Write([]byte("sh")); e != nil {
+		t.Fatal(e)
+	}
+	if e := writer.Close(); e != nil {
+		t.Fatal(e)
+	}
+	tree := t.TempDir()
+	modes := map[string]bool{}
+	if e := extractSourceTreeModes(&snapshot, tree, modes); e != nil {
+		t.Fatal(e)
+	}
+	if e := os.Chmod(filepath.Join(tree, "run.sh"), 0644); e != nil {
+		t.Fatal(e)
+	}
+	out := filepath.Join(t.TempDir(), "source.tar.gz")
+	if e := archiveSourceTree(tree, out, time.Unix(0, 0), modes); e != nil {
+		t.Fatal(e)
+	}
+	entries, _ := readSourceArchive(t, out)
+	if entries["turnsmith-wca-source/run.sh"].header.Mode != 0755 {
+		t.Fatal("lost Git executable mode")
 	}
 }
