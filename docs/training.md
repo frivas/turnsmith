@@ -1,6 +1,17 @@
 # User-owned case training
 
-Training uses collections supplied by the user. No algorithm library is bundled. A collection is JSON:
+Training uses collections supplied by the user. No algorithm library is bundled.
+A case's inverse setup intentionally selects that case, so it is not a uniformly
+random competition scramble. The `wca` generation default applies to generated
+scrambles in ordinary generation, guides, and timers; it does not replace the
+algorithms in a training collection. `--seed` in training controls case selection
+for repeatable practice, not secret competition scramble generation.
+
+The native `turnsmith-wca` companion is required for generated 444 `wca`
+scrambles, but supplied 444 cases replay locally without invoking it. Both
+executables ship in release archives. No Java or runtime downloads are needed.
+
+A collection is JSON:
 
 ```json
 {

@@ -2,6 +2,9 @@
 
 ## 0.3.0 - 2026-10-31
 
+- Default practice now uses WCA-style state sampling: 2x2 excludes states closer than four moves, 3x3/4x4 exclude states closer than two. Unseeded generation uses fresh cryptographic words; explicit seeds are labeled reproducible seeded practice.
+- Added a native Go 4x4 three-phase backend adapted from TNoodle, independently checked against sampled targets. It ships as a separate GPL-licensed executable with corresponding source and needs no Java. Official WCA competitions still require the current official scramble program.
+
 - Interactive Next/Back cube guidance with inverse undo moves and compact final diagrams.
 - Algorithm import, inspection and inversion, including saved JSON, wide/slice moves, rotations, groups, commutators and conjugates.
 - Portable terminal input, resize handling, color depth options and Bash/Zsh/Fish/PowerShell completions.

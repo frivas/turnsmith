@@ -17,6 +17,7 @@ import (
 
 type sequenceInput struct {
 	Puzzle, Seed, Method, AlgorithmVersion, AppVersion string
+	Randomness                                         string
 	Sequences                                          [][]alg.Move
 }
 type inspectionRecord struct {
@@ -36,6 +37,7 @@ type inspectionDocument struct {
 	Method           string             `json:"method,omitempty"`
 	AlgorithmVersion string             `json:"algorithm_version,omitempty"`
 	SourceAppVersion string             `json:"source_app_version,omitempty"`
+	Randomness       string             `json:"randomness,omitempty"`
 	Sequences        []inspectionRecord `json:"sequences"`
 }
 
@@ -114,6 +116,7 @@ func (c CLI) readSequences(o commandOptions) (sequenceInput, error) {
 			batch.Method = doc.Method
 			batch.AlgorithmVersion = doc.AlgorithmVersion
 			batch.AppVersion = doc.SourceAppVersion
+			batch.Randomness = doc.Randomness
 			batch.Parameters.Count = len(doc.Sequences)
 			for _, item := range doc.Sequences {
 				batch.Scrambles = append(batch.Scrambles, app.Scramble{Index: item.Index, Moves: item.Moves, Sequence: item.Sequence, MoveCount: item.MoveCount})
@@ -135,6 +138,7 @@ func (c CLI) readSequences(o commandOptions) (sequenceInput, error) {
 			}
 		}
 		result.Puzzle, result.Seed, result.Method, result.AlgorithmVersion, result.AppVersion = batch.Puzzle, batch.Seed, batch.Method, batch.AlgorithmVersion, batch.AppVersion
+		result.Randomness = batch.Randomness
 		total := 0
 		for i, item := range batch.Scrambles {
 			if len(item.Moves) == 0 || len(item.Moves) > 10000 || item.Index != i+1 || item.MoveCount != len(item.Moves) || strings.Join(item.Moves, " ") != item.Sequence {
@@ -237,7 +241,7 @@ func (c CLI) generatedSequence(ctx context.Context, o commandOptions) (sequenceI
 	if e != nil {
 		return sequenceInput{}, e
 	}
-	return sequenceInput{Puzzle: result.Puzzle, Seed: result.Seed, Method: result.Method, AlgorithmVersion: result.AlgorithmVersion, AppVersion: result.AppVersion, Sequences: [][]alg.Move{moves}}, nil
+	return sequenceInput{Puzzle: result.Puzzle, Seed: result.Seed, Method: result.Method, AlgorithmVersion: result.AlgorithmVersion, AppVersion: result.AppVersion, Randomness: result.Randomness, Sequences: [][]alg.Move{moves}}, nil
 }
 func (c CLI) sequenceCommand(ctx context.Context, name string, args []string, w io.Writer) error {
 	o, e := sequenceOptions(args)
@@ -309,7 +313,7 @@ func (c CLI) sequenceCommand(ctx context.Context, name string, args []string, w 
 			return view.Frame(states, moves, index, width, height, action, style), nil
 		})
 	}
-	doc := inspectionDocument{SchemaVersion: 1, Kind: "inspection", Puzzle: input.Puzzle, Seed: input.Seed, Method: input.Method, AlgorithmVersion: input.AlgorithmVersion, SourceAppVersion: input.AppVersion}
+	doc := inspectionDocument{SchemaVersion: 1, Kind: "inspection", Puzzle: input.Puzzle, Seed: input.Seed, Method: input.Method, AlgorithmVersion: input.AlgorithmVersion, SourceAppVersion: input.AppVersion, Randomness: input.Randomness}
 	for i, moves := range input.Sequences {
 		if e := ctx.Err(); e != nil {
 			return e

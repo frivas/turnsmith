@@ -8,6 +8,7 @@ import (
 	"github.com/frivas/turnsmith/internal/randomstate"
 	"github.com/frivas/turnsmith/internal/terminal"
 	"github.com/frivas/turnsmith/internal/view"
+	"github.com/frivas/turnsmith/internal/wcaengine"
 	"os"
 	"os/signal"
 	"runtime/debug"
@@ -33,8 +34,17 @@ func run() int {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 	reg333 := cube333.Registration()
-	reg333.Generators = append(reg333.Generators, randomstate.Cube333{})
-	registry, err := puzzle.New(reg333, randomstate.Registration222(), cube444.Registration())
+	reg333.Generators = append(reg333.Generators, randomstate.Cube333{}, randomstate.Cube333WCA{})
+	reg333.Puzzle.DefaultMethod = "wca"
+	reg222 := randomstate.Registration222()
+	reg222.Generators = append(reg222.Generators, randomstate.Cube222WCA{})
+	reg222.Puzzle.DefaultMethod = "wca"
+	backend := wcaengine.New("")
+	defer backend.Close()
+	reg444 := cube444.Registration()
+	reg444.Generators = append(reg444.Generators, backend)
+	reg444.Puzzle.DefaultMethod = "wca"
+	registry, err := puzzle.New(reg333, reg222, reg444)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: initialize registry: %s\n", err)
 		return 1

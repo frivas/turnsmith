@@ -39,3 +39,20 @@ training layout at that height.
 The script and raw terminal traces are temporary verification artifacts, not
 runtime dependencies or bundled training content. No default user data directory
 was used during these checks.
+
+
+## Native WCA extension checks
+
+After the native Go WCA backend was added, the complete unit/integration suite
+passed again. This includes exhaustive shallow-state rejection for 222/333,
+100 independent full 444 sampled targets, native executable generation through
+the process broker, cryptographic-vs-seeded metadata, and the unchanged explicit
+legacy random-move seed42 sequence. Center normalization at the 444-to-333
+reduction boundary has a specific rotated-center regression fixture.
+
+The WCA backend is entirely Go. Tests compare emitted444 scrambles to their
+sampled targets with the independent geometric model modulo24 whole-cube
+rotations. Coordinate, symmetry, pruning, cancellation, bounded failure,
+concurrent generation, exact entropy-word forwarding and process cleanup checks
+are separate from the statistical uniformity argument. Source attribution,
+licensing and generation rules are recorded in the WCA research documents.

@@ -43,6 +43,7 @@ type Result struct {
 	Method           string     `json:"method"`
 	AlgorithmVersion string     `json:"algorithm_version"`
 	Seed             string     `json:"seed"`
+	Randomness       string     `json:"randomness,omitempty"`
 	Parameters       Parameters `json:"parameters"`
 	Scrambles        []Scramble `json:"scrambles"`
 }
@@ -92,17 +93,28 @@ func (s Service) Generate(ctx context.Context, req Request) (Result, error) {
 		}
 		length = &n
 	}
+	direct := m.DirectEntropy && req.Seed == nil
 	var seed uint64
-	if req.Seed != nil {
-		seed = *req.Seed
+	seedText := ""
+	randomness := ""
+	if direct {
+		randomness = "cryptographic"
 	} else {
-		var err error
-		seed, err = random.Seed(s.Entropy)
-		if err != nil {
-			return Result{}, err
+		if req.Seed != nil {
+			seed = *req.Seed
+		} else {
+			var err error
+			seed, err = random.Seed(s.Entropy)
+			if err != nil {
+				return Result{}, err
+			}
+		}
+		seedText = strconv.FormatUint(seed, 10)
+		if m.DirectEntropy {
+			randomness = "seeded-practice"
 		}
 	}
-	result := Result{SchemaVersion: 1, AppVersion: s.Version, Puzzle: d.ID, Method: m.ID, AlgorithmVersion: m.AlgorithmVersion, Seed: strconv.FormatUint(seed, 10), Parameters: Parameters{Length: length, Count: req.Count}, Scrambles: make([]Scramble, 0, req.Count)}
+	result := Result{SchemaVersion: 1, AppVersion: s.Version, Puzzle: d.ID, Method: m.ID, AlgorithmVersion: m.AlgorithmVersion, Seed: seedText, Randomness: randomness, Parameters: Parameters{Length: length, Count: req.Count}, Scrambles: make([]Scramble, 0, req.Count)}
 	total := 0
 	for i := 0; i < req.Count; i++ {
 		if err := ctx.Err(); err != nil {
@@ -114,7 +126,24 @@ func (s Service) Generate(ctx context.Context, req Request) (Result, error) {
 			n := *length
 			options.Length = &n
 		}
-		generated, err := g.Generate(ctx, random.Derive(seed, d.ID, m.ID, m.AlgorithmVersion, uint64(i)), options)
+		generationCtx := ctx
+		var cancel context.CancelFunc
+		var source random.Source
+		var entropy *random.EntropySource
+		if direct {
+			generationCtx, cancel = context.WithCancel(ctx)
+			entropy = random.NewEntropySource(s.Entropy, func(error) { cancel() })
+			source = entropy
+		} else {
+			source = random.Derive(seed, d.ID, m.ID, m.AlgorithmVersion, uint64(i))
+		}
+		generated, err := g.Generate(generationCtx, source, options)
+		if cancel != nil {
+			cancel()
+		}
+		if entropy != nil && entropy.Err() != nil {
+			return Result{}, fmt.Errorf("generate scramble %d: %w", i+1, entropy.Err())
+		}
 		if err != nil {
 			return Result{}, fmt.Errorf("generate scramble %d: %w", i+1, err)
 		}

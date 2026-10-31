@@ -20,16 +20,25 @@ func TestExecutable(t *testing.T) {
 	if data, err := build.CombinedOutput(); err != nil {
 		t.Fatalf("build executable: %v\n%s", err, data)
 	}
+	backendName := "turnsmith-wca"
+	if runtime.GOOS == "windows" {
+		backendName += ".exe"
+	}
+	backendBuild := exec.Command("go", "build", "-o", filepath.Join(filepath.Dir(binary), backendName), "../turnsmith-wca")
+	if data, err := backendBuild.CombinedOutput(); err != nil {
+		t.Fatalf("build native backend: %v\n%s", err, data)
+	}
+
 	for _, tc := range []struct {
 		args   []string
 		status int
 	}{
-		{nil, 0}, {[]string{"--seed", "42", "--json"}, 0}, {[]string{"--version"}, 0}, {[]string{"version"}, 0}, {[]string{"help"}, 0}, {[]string{"puzzles", "--json"}, 0},
+		{nil, 0}, {[]string{"--json"}, 0}, {[]string{"--puzzle", "444", "--seed", "42", "--count", "2", "--json"}, 0}, {[]string{"--seed", "42", "--json"}, 0}, {[]string{"--version"}, 0}, {[]string{"version"}, 0}, {[]string{"help"}, 0}, {[]string{"puzzles", "--json"}, 0},
 		{[]string{"--seed", "-1"}, 2}, {[]string{"--puzzle", "555"}, 2},
-		{[]string{"--steps", "--seed", "42", "--length", "3", "--color", "never"}, 0},
+		{[]string{"--steps", "--method", "random-move", "--seed", "42", "--length", "3", "--color", "never"}, 0},
 		{[]string{"--steps", "--json"}, 2},
 		{[]string{"--puzzle", "222", "--seed", "42", "--json"}, 0},
-		{[]string{"--puzzle", "444", "--seed", "42", "--diagram"}, 0},
+		{[]string{"--puzzle", "444", "--method", "random-move", "--seed", "42", "--diagram"}, 0},
 		{[]string{"--method", "random-state", "--seed", "42", "--json"}, 0},
 		{[]string{"inspect", "--alg", "[R,U]", "--json"}, 0},
 		{[]string{"inverse", "--alg", "R U"}, 0},
@@ -61,9 +70,16 @@ func TestExecutable(t *testing.T) {
 		if len(tc.args) > 0 && tc.args[0] == "--steps" && !strings.Contains(out.String(), "Step 3/3: U") {
 			t.Fatal(out.String())
 		}
-		if len(tc.args) == 0 && len(strings.Fields(out.String())) != 25 {
+		if len(tc.args) == 0 && (len(strings.Fields(out.String())) < 2 || len(strings.Fields(out.String())) > 30) {
 			t.Fatal(out.String())
 		}
+		if len(tc.args) == 1 && tc.args[0] == "--json" {
+			var result struct{ Method, Seed, Randomness string }
+			if e := json.Unmarshal(out.Bytes(), &result); e != nil || result.Method != "wca" || result.Seed != "" || result.Randomness != "cryptographic" {
+				t.Fatal(result, e, out.String())
+			}
+		}
+
 		if len(tc.args) > 0 && tc.args[len(tc.args)-1] == "--json" && !json.Valid(out.Bytes()) {
 			t.Fatal(out.String())
 		}

@@ -29,7 +29,7 @@ type CLI struct {
 	ColorDepth string
 }
 
-const help = `turnsmith provides reproducible cube scrambles and local terminal practice.
+const help = `turnsmith provides WCA-style cube practice and local terminal sessions.
 
 Usage:
   turnsmith [flags]
@@ -42,10 +42,10 @@ Usage:
 
 Generation flags:
   -p, --puzzle ID    Puzzle ID or alias (default 333)
-      --method ID    Generation method (default random-move for 333)
-  -l, --length N     Tokens per scramble (default 25; range 1..1000)
+      --method ID    Generation method (default wca)
+  -l, --length N     Tokens for random-move only (333:25, 444:40; range 1..1000)
   -n, --count N      Scrambles (default 1; range 1..10000)
-      --seed N       Unsigned decimal 64-bit root seed (including zero)
+      --seed N       Optional unsigned seed for reproducible practice, including zero
       --json         Emit a versioned JSON document
       --steps        Show a solved cube and each move as a tile diagram
       --diagram      Show only the final cube state
@@ -56,9 +56,10 @@ Generation flags:
 
 At most 1000000 total moves may be requested.
 Step diagrams support at most 1000 total moves and cannot be combined with JSON.
-Run a command with --help for its options. 222 supports random-state;
-333 supports random-move and random-state; 444 supports random-move.
+Run a command with --help for its options. 222 supports wca and random-state;
+333 supports wca, random-move and random-state; 444 supports wca and random-move.
 Notation includes outer turns and wide turns for 444.
+Unseeded wca uses fresh cryptographic randomness; seeds select reproducible practice.
 A half turn counts as one token. Random moves do not uniformly sample states
 and are not approved for official competition. No runtime network access.
 `

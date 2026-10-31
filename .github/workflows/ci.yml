@@ -27,7 +27,9 @@ jobs:
       - run: go vet ./...
       - name: Race detector
         if: runner.os == 'Linux'
-        run: go test -race ./...
+        # Full sampler sweeps already ran in the native test step. The short
+        # race suite retains table, concurrent-generation and storage checks.
+        run: go test -race -short ./...
       - name: Fuzz seed parsing
         if: runner.os == 'Linux'
         run: go test ./internal/random -run '^$' -fuzz FuzzParseSeed -fuzztime 5s

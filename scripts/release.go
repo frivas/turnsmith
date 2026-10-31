@@ -60,6 +60,36 @@ func run() error {
 	if _, err := os.Stat("go.mod"); err != nil {
 		return fmt.Errorf("run from repository root: %w", err)
 	}
+	// Binary and corresponding source must describe the same committed tree.
+	git := func(args ...string) (string, error) {
+		data, e := exec.Command("git", args...).CombinedOutput()
+		if e != nil {
+			return "", fmt.Errorf("git: %w: %s", e, data)
+		}
+		return strings.TrimSpace(string(data)), nil
+	}
+	head, e := git("rev-parse", "--verify", "HEAD^{commit}")
+	if e != nil {
+		return e
+	}
+	if *commit == "unknown" {
+		*commit = head
+	}
+	resolved, e := git("rev-parse", "--verify", *commit+"^{commit}")
+	if e != nil {
+		return e
+	}
+	if resolved != head {
+		return fmt.Errorf("release commit must match the checked-out HEAD")
+	}
+	status, e := git("status", "--porcelain", "--untracked-files=normal")
+	if e != nil {
+		return e
+	}
+	if status != "" {
+		return fmt.Errorf("commit the working tree before packaging matching binaries and corresponding source")
+	}
+	*commit = resolved
 	if err := os.MkdirAll(*out, 0755); err != nil {
 		return err
 	}
@@ -99,7 +129,19 @@ func run() error {
 			}
 			name := fmt.Sprintf("turnsmith_%s_%s_%s%s", *version, goos, arch, extension)
 			path := filepath.Join(*out, name)
-			if err := archive(path, executable, binary, changelogPath, timestamp, goos == "windows"); err != nil {
+			backendName := "turnsmith-wca"
+			if goos == "windows" {
+				backendName += ".exe"
+			}
+			backendBinary := filepath.Join(temp, backendName)
+			backendCommand := exec.Command("go", "build", "-trimpath", "-ldflags", flags, "-o", backendBinary, "./cmd/turnsmith-wca")
+			backendCommand.Env = command.Env
+			backendCommand.Stdout = os.Stdout
+			backendCommand.Stderr = os.Stderr
+			if err := backendCommand.Run(); err != nil {
+				return fmt.Errorf("build backend %s/%s: %w", goos, arch, err)
+			}
+			if err := archive(path, executable, binary, backendName, backendBinary, changelogPath, timestamp, goos == "windows"); err != nil {
 				return fmt.Errorf("archive %s: %w", name, err)
 			}
 			data, err := os.ReadFile(path)
@@ -110,9 +152,20 @@ func run() error {
 			fmt.Println(path)
 		}
 	}
+	sourceName := fmt.Sprintf("turnsmith-wca_%s_source.tar.gz", *version)
+	sourcePath := filepath.Join(*out, sourceName)
+	if err := release.SourceArchive(".", sourcePath, *commit, timestamp); err != nil {
+		return fmt.Errorf("backend corresponding source: %w", err)
+	}
+	sourceData, err := os.ReadFile(sourcePath)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintf(&sums, "%x  %s\n", sha256.Sum256(sourceData), sourceName)
+	fmt.Println(sourcePath)
 	return os.WriteFile(filepath.Join(*out, "SHA256SUMS"), []byte(sums.String()), 0644)
 }
-func archive(path, executable, binary, changelog string, timestamp time.Time, windows bool) (err error) {
+func archive(path, executable, binary, backendName, backendBinary, changelog string, timestamp time.Time, windows bool) (err error) {
 	file, err := os.Create(path)
 	if err != nil {
 		return err
@@ -126,8 +179,8 @@ func archive(path, executable, binary, changelog string, timestamp time.Time, wi
 		name, path string
 		mode       int64
 	}
-	assets := []asset{{executable, binary, 0755}, {"README.md", "README.md", 0644}, {"LICENSE", "LICENSE", 0644}, {"THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md", 0644}, {"docs/cube-orientation.svg", "docs/cube-orientation.svg", 0644}}
-	for _, path := range []string{"docs/terminal.md", "docs/training.md", "docs/sessions.md", "docs/daily-practice.md", "docs/research/random-state-engine.md"} {
+	assets := []asset{{executable, binary, 0755}, {backendName, backendBinary, 0755}, {"BACKEND-LICENSE.txt", "internal/tnoodle444/COPYING", 0644}, {"README.md", "README.md", 0644}, {"LICENSE", "LICENSE", 0644}, {"THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md", 0644}, {"docs/cube-orientation.svg", "docs/cube-orientation.svg", 0644}}
+	for _, path := range []string{"docs/terminal.md", "docs/training.md", "docs/sessions.md", "docs/daily-practice.md", "docs/research/random-state-engine.md", "docs/research/wca-practice.md", "docs/research/wca-444-backend.md"} {
 		assets = append(assets, asset{path, path, 0644})
 	}
 	if changelog != "" {

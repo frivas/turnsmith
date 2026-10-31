@@ -94,6 +94,7 @@ func Changelog(dir, version, commit string) (string, error) {
 			fmt.Fprintf(&notes, "| %s | %s | [%s](%s/releases/download/%s/%s) |\n", os, arch, name, repository, url.PathEscape("v"+version), url.PathEscape(name))
 		}
 	}
+	fmt.Fprintf(&notes, "\nArchives include the CLI and its separate GPL-licensed native Go 4x4 backend, with no Java requirement. [Backend corresponding source with vendored dependencies](%s/releases/download/%s/turnsmith-wca_%s_source.tar.gz). See BACKEND-LICENSE.txt and THIRD_PARTY_NOTICES.md in each package.\n", repository, url.PathEscape("v"+version), url.PathEscape(version))
 	notes.WriteString("\nVerify downloads against the attached `SHA256SUMS`. macOS and Windows binaries are unsigned.\n")
 	return notes.String(), nil
 }

@@ -96,6 +96,7 @@ func Build(ctx context.Context, service app.Service, options Options) (Manifest,
 	if err != nil {
 		return Manifest{}, err
 	}
+	result.Randomness = "seeded-practice"
 	name := options.Name
 	if name == "" {
 		name = "Daily practice " + date

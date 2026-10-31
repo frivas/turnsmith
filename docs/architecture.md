@@ -1,12 +1,18 @@
 # Architecture
 
-Generation is synchronous,
-offline, and local to each call. Puzzle and method are separate: `333` describes
-a puzzle, and `random-move` describes an available method for it.
+Generation is synchronous and offline. Puzzle and method are separate: `333`
+identifies a puzzle, while `wca`, `random-state`, and `random-move` identify
+versioned generation methods. The production registry defaults to `wca` for
+222, 333, and 444. The first two run in the main executable; 444 uses the separate
+native Go `turnsmith-wca` companion.
 
 | Package | Responsibility |
 | --- | --- |
 | `cmd/turnsmith` | Build metadata, signal context, OS entropy, explicit registration, process exit |
+| `cmd/turnsmith-wca` | Separate GPL native 4×4 executable and bounded JSON-line process protocol |
+| `internal/wcaengine` | MIT client, companion discovery/lifetime, entropy exchange, result validation |
+| `internal/tnoodle444` | GPL threephase port, cubie model, lazy tables, reduction and search |
+| `internal/randomstate` | Native 222/333 samplers, bounded solving, legacy and `wca` filters |
 | `internal/cli` | Strict flag parsing, explicit-length tracking, help, discovery, exit codes |
 | `internal/app` | Resolve defaults and aliases, validate limits, seed, derive independent streams, assemble batches |
 | `internal/puzzle` | Generator boundary, typed capabilities, immutable registry and sorted discovery |
@@ -27,17 +33,19 @@ A generator failure discards the batch. Output writers can still fail midway
 through serialization; this returns status 1 with useful context where stderr
 is writable. Context cancellation propagates as status 130. The executable
 handles Ctrl-C through `signal.NotifyContext`. All loops over moves and batch
-members check cancellation. Generation uses no runtime shell commands or external table files. Explicit
-sequence imports and session/training modes read user-selected or local data.
+members check cancellation. Default 444 generation executes a native companion
+directly, without a shell or Java runtime. It computes its tables in memory and
+has no downloaded table requirement. Explicit sequence imports and
+session/training modes read user-selected or local data.
 
-Registration is explicit in `main`, with no init functions or mutable generation
-globals. Registry maps are private, descriptors are copied in and out including
+Registration is explicit in `main`. Random-state tables initialize lazily and
+remain read-only after successful construction. Search buffers belong to each
+call. The companion client serializes its process protocol and owns cleanup. Registry maps are private, descriptors are copied in and out including
 optional lengths and slices, and listing is sorted. Canonical IDs and aliases
 share one collision namespace. Methods are keyed inside each puzzle. Future
 puzzles require a registration and implementation, with no CLI or renderer
-switch statements. Generator implementations must be immutable and safe for
-independent calls; registry construction cannot enforce that contract for
-arbitrary implementations.
+switch statements. Generator implementations must be safe for independent calls; registry
+construction cannot enforce that contract for arbitrary implementations.
 
 Cube generators use typed moves internally and render at their boundary.
 Non-cube generators can emit their own notation, such as the test fixture's
@@ -45,10 +53,14 @@ Non-cube generators can emit their own notation, such as the test fixture's
 layer widths. There is no arbitrary options map, plugin loader, database,
 configuration layer, or public library API.
 
-Each scramble derives a separate stream from root seed, canonical puzzle,
-method, algorithm version, and zero-based index. Draws in one scramble cannot
-advance another. No full cube simulator, visited-state filter, or shared history
-is needed to produce legal outer-face sequences.
+Seeded requests derive a separate stream from root seed, canonical puzzle,
+method, algorithm version, and zero-based index. Draws in one seeded scramble
+cannot advance another. Legacy methods retain their version-1 stream contract.
+Unseeded `wca` requests instead consume OS cryptographic entropy directly, report
+`randomness: cryptographic`, and leave the result seed empty. Explicit seeds
+select `seeded-practice` and retain minimum-distance filtering. The companion
+requests entropy words through its process protocol, so the main CLI supplies
+the selected source. Daily generation always supplies a derived practice seed.
 
 ## Consequential choices
 
@@ -74,8 +86,8 @@ is needed to produce legal outer-face sequences.
 
 `--steps` selects a renderer registered by canonical puzzle ID in `cli.CLI.Guides`.
 The renderer interface accepts a completed sequence, context, writer, and color
-choice. The entrypoint wires the 333 guide independently of generator registration;
-future puzzle guides can be registered without changing CLI dispatch or serializers.
+choice. The entrypoint wires 222, 333, and 444 guides independently of generator
+registration; future guides can be registered without changing serializers.
 Aliases resolve through the same puzzle registry. Unsupported guides and JSON/step
 combinations fail explicitly. The diagram mode limits the whole batch to 1000 moves
 before writing output.
@@ -103,12 +115,32 @@ generation. The original cube333 model and reference fixtures remain an
 independent check for the generalized model and random-state engine.
 
 `randomstate` uses pinned native gocube transitions/tables with caller-local
-sampling and bounded search. `cube444` is a separate random-move registration.
-`daily` derives versioned UTC practice seeds through the ordinary app service.
+sampling and bounded search. Its `wca` methods reject states below the WCA
+minimum solving distance; legacy `random-state` remains unchanged. `cube444`
+retains its explicit random-move registration. `daily` derives versioned UTC
+practice seeds through the ordinary app service and defaults to `wca` while
+reporting seeded practice.
 `practice` owns solves/sessions; `training` owns case progress. Both stores use
 separate versioned files, cross-process locks, atomic replacement, validated
 backups and explicit recovery. No persistent write occurs in default generation.
 The CLI owns interactive state machines and command-specific presentation.
 
-Third-party Go dependencies are compiled into the executable. There is no
-runtime JavaScript, Java, external solver process or network requirement.
+The main CLI compiles only permissively licensed dependencies. It does not
+import or link `internal/tnoodle444`. The separate `turnsmith-wca` executable
+contains the GPL-3.0-or-later port of Shuang Chen's TNoodle threephase solver,
+pinned at `d01a947d9f028f38085cda9b0507a9cf3d3f38a8`, with its license in
+`internal/tnoodle444/COPYING`. Original MIT files retain their notices.
+
+Release archives contain both native executables, `BACKEND-LICENSE.txt`, and
+third-party notices. A corresponding-source archive includes the backend source,
+vendored dependencies, and offline build instructions. There is no Java,
+JavaScript runtime, service, or network requirement. The main client searches
+beside its executable, then PATH, with `TURNSMITH_WCA_BACKEND` as an explicit
+path override. A missing backend is an error, without method substitution.
+
+The backend constructs immutable symmetry/pruning tables once per process and
+uses per-call search state. Initialization and search check context cancellation
+and resource bounds. Errors discard the requested batch. Reaching a sampled
+state and applying the minimum-distance rule do not confer official program
+approval. Official WCA competitions still require the current official TNoodle
+release under Regulation 4b.

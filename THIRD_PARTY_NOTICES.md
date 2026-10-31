@@ -1,10 +1,15 @@
 # Attribution and notices
 
-Turnsmith's original code is MIT licensed. Native cubie transitions and coordinate
-tables come from unixpickle/gocube. Terminal input and display use tcell and its
-dependencies. These modules are pinned by go.mod/go.sum and compiled into release
-binaries. Their complete license texts follow. No competitor application code or
-training dataset is bundled.
+Turnsmith's original CLI code is MIT licensed under the root LICENSE. Native
+cubie transitions and coordinate tables come from unixpickle/gocube. Terminal
+input and display use tcell and its dependencies. These modules are pinned by
+go.mod/go.sum and compiled into release binaries. Their complete license texts
+follow. No third-party training dataset is bundled.
+
+The separate native Go `turnsmith-wca` executable includes the GPL-3.0-or-later
+4×4 solver described below. The MIT CLI does not link that solver package; it
+communicates with the companion as a separate process. The root MIT LICENSE
+does not replace the GPL terms on this backend.
 
 Deterministic randomness uses Go's standard-library `math/rand/v2.PCG`, based on
 Melissa O'Neill's PCG work. See https://www.pcg-random.org/ and Go's implementation
@@ -13,6 +18,29 @@ The binary contains the Go runtime and standard library. Their license follows.
 The algorithm specification in docs/reproducibility.md records the arithmetic
 contract; future adaptations of external implementations must record their
 repository, commit, author credit, and license here.
+
+## Native 4×4 backend and TNoodle threephase port
+
+`internal/tnoodle444` and `cmd/turnsmith-wca` are GPL-3.0-or-later. The solver is a
+Go adaptation of Shuang Chen's `cs.threephase` implementation from TNoodle-lib,
+pinned to commit `d01a947d9f028f38085cda9b0507a9cf3d3f38a8`.
+
+Copyright (C) 2014 Shuang Chen. Go adaptation Copyright (C) 2026 Francisco Rivas
+and contributors. The adapted files preserve SPDX license identifiers,
+attribution, and modification notices. This program is distributed without any
+warranty under GNU GPL version 3 or, at your option, a later version.
+
+Source: https://github.com/thewca/tnoodle-lib/tree/d01a947d9f028f38085cda9b0507a9cf3d3f38a8/threephase/src/main/java/cs/threephase
+
+The complete GPL text is [internal/tnoodle444/COPYING](internal/tnoodle444/COPYING)
+in the repository and `BACKEND-LICENSE.txt` in binary packages. It is distributed
+with the backend, rather than duplicated in this notice. Release
+`turnsmith-wca_0.3.0_source.tar.gz` contains corresponding source, vendored Go
+dependencies, license files, and offline build instructions. The corresponding
+source is also available from the release's tagged repository revision.
+
+This attribution does not claim official WCA approval. Official competitions
+must use the current official TNoodle program; a Go port is practice software.
 
 ## Cube-state test reference
 

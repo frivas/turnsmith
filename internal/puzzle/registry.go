@@ -14,6 +14,7 @@ type GeneratorDescriptor struct {
 	AlgorithmVersion string `json:"algorithm_version"`
 	Description      string `json:"description"`
 	ExplicitLength   bool   `json:"explicit_length"`
+	DirectEntropy    bool   `json:"direct_entropy,omitempty"`
 	DefaultLength    *int   `json:"default_length,omitempty"`
 	MinLength        int    `json:"min_length,omitempty"`
 	MaxLength        int    `json:"max_length,omitempty"`

@@ -149,15 +149,19 @@ func (c CLI) timerCommand(ctx context.Context, args []string, out io.Writer) err
 	// Validate/generate before creating optional local storage.
 	var root uint64
 	var attempt uint64
+	var deriveNext bool
 	generate := func() (sequenceInput, error) {
-		if attempt > 0 {
+		if attempt > 0 && deriveNext {
 			o.seen["seed"] = true
 			o.values["seed"] = strconv.FormatUint(random.Derive(root, o.values["puzzle"], o.values["method"], "timer/v1", attempt).Uint64(), 10)
 		}
 		input, err := c.generatedSequence(ctx, o)
 		if err == nil {
 			if attempt == 0 {
-				root, _ = random.ParseSeed(input.Seed)
+				deriveNext = input.Seed != ""
+				if deriveNext {
+					root, _ = random.ParseSeed(input.Seed)
+				}
 			}
 			attempt++
 		}

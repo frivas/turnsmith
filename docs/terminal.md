@@ -8,6 +8,18 @@ cursor, input mode, and Unix descriptor flags when they finish, including after
 Ctrl-C, cancellation, or an application error. Terminal handling uses
 [tcell's native Windows and Unix backends](https://github.com/gdamore/tcell/tree/v2.13.10).
 
+Generation defaults to `wca` for 222, 333, and 444. Without `--seed`, the
+sampler draws directly from OS cryptographic entropy. `--seed` selects
+reproducible seeded practice with the same minimum-distance filter. Neither mode
+makes Turnsmith an official WCA competition program. Daily sets are always
+seeded practice. Supplied algorithms replay the moves you give them.
+
+For 444, install the native Go `turnsmith-wca` companion beside `turnsmith`, or
+put it on PATH. It ships in the release archive and needs no Java or runtime
+downloads. First use builds its tables in memory. Missing companions and bounded
+initialization/search failures return an error without substituting a method.
+See [installation](../README.md#installation).
+
 ## Follow a scramble
 
 ```sh
@@ -86,7 +98,9 @@ turnsmith daily --date 2026-10-31 --count 10 --json
 turnsmith guide --file daily.json --index 3
 ```
 
-The default date is today's UTC calendar date and the default count is five.
+The default date is today's UTC calendar date, the default count is five, and
+the default method is `wca`. Daily sets use a predictable derived seed and report
+`randomness: seeded-practice`; they are not secret competition scrambles.
 Seed policy version 1 derives the root seed from the date, canonical puzzle ID,
 and method. The name, count, and length do not change that seed. The manifest
 records the application and algorithm versions needed to identify its generator.
@@ -98,7 +112,8 @@ replaces an existing destination only after generation, validation, and a
 completed temporary-file write. `--json` selects JSON for stdout too. Keep shared
 sets unchanged when asking others to practise the same moves.
 Daily manifests are limited to 1 MiB so that `inspect` and `guide` can load them;
-reduce the count or move length if a set exceeds that limit.
+reduce the count if a set exceeds that limit. Move length is configurable only
+with explicit `--method random-move`; `wca` chooses its own output length.
 
 ## Shell completions
 

@@ -132,3 +132,30 @@ Select the matching macOS/Linux archive and SHA-256 for Intel or ARM, install
 `--seed 42 --length 1`. Run `brew audit` and `brew test` against the actual
 formula. Then document `brew install frivas/TAP/turnsmith` with real identifiers.
 No formula or claimed install command is included before those prerequisites.
+
+## Native 4x4 backend and corresponding source
+
+Starting with v0.3.0, every platform archive contains both `turnsmith` and
+`turnsmith-wca`, plus `BACKEND-LICENSE.txt`. The original CLI remains MIT code;
+the separate native Go backend contains the GPL-3.0-or-later TNoodle adaptation.
+Release assets include `turnsmith-wca_VERSION_source.tar.gz` with the exact
+committed source and vendored Go modules. Its digest is included in SHA256SUMS.
+Recipients can build from that archive without downloading modules:
+
+```sh
+tar -xzf turnsmith-wca_0.3.0_source.tar.gz
+cd turnsmith-wca-source
+GOPROXY=off GOSUMDB=off go build -mod=vendor -o turnsmith-wca ./cmd/turnsmith-wca
+```
+
+Packaging requires a clean committed working tree and a source commit matching
+HEAD, so binary metadata and corresponding source cannot describe different
+revisions. Omitting `--commit` resolves it to HEAD. The release's exact committed
+CHANGELOG section supplies highlights above the Git-history commit list.
+
+Native CI runs complete sampler sweeps on all three operating systems. Linux's
+short race suite retains table, concurrency, error, storage and ordinary state
+checks; it omits only the extended sampler sweeps already run without race
+instrumentation. The public release workflow repeats this verification before
+building or publishing either executable. No Java or runtime table downloads
+are needed.
