@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/frivas/turnsmith/internal/dirlock"
 	"io"
 	"os"
 	"path/filepath"
@@ -111,38 +112,24 @@ func (s *Store) acquire(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	deadline := time.NewTimer(s.lockWait)
-	defer deadline.Stop()
-	tick := time.NewTicker(20 * time.Millisecond)
-	defer tick.Stop()
-	for {
-		if err := ctx.Err(); err != nil {
-			return "", err
+
+	if err := dirlock.Mkdir(ctx, s.lockPath(), s.lockWait, 20*time.Millisecond); err != nil {
+		if errors.Is(err, dirlock.ErrTimeout) && errors.Is(err, os.ErrExist) {
+			return "", fmt.Errorf("%w: %w", ErrLocked, err)
 		}
-		err := os.Mkdir(s.lockPath(), 0700)
-		if err == nil {
-			data, err := json.Marshal(LockOwner{Token: token, PID: os.Getpid(), CreatedAt: time.Now().UTC()})
-			if err == nil {
-				err = os.WriteFile(filepath.Join(s.lockPath(), "owner.json"), data, 0600)
-			}
-			if err != nil {
-				_ = os.Remove(filepath.Join(s.lockPath(), "owner.json"))
-				_ = os.Remove(s.lockPath())
-				return "", err
-			}
-			return token, nil
-		}
-		if !errors.Is(err, os.ErrExist) {
-			return "", err
-		}
-		select {
-		case <-ctx.Done():
-			return "", ctx.Err()
-		case <-deadline.C:
-			return "", fmt.Errorf("%w at %s; inspect owner.json and only recover an abandoned lock after stopping its owner", ErrLocked, s.lockPath())
-		case <-tick.C:
-		}
+		return "", err
 	}
+	data, err := json.Marshal(LockOwner{Token: token, PID: os.Getpid(), CreatedAt: time.Now().UTC()})
+	if err == nil {
+		err = os.WriteFile(filepath.Join(s.lockPath(), "owner.json"), data, 0600)
+	}
+	if err != nil {
+		_ = os.Remove(filepath.Join(s.lockPath(), "owner.json"))
+		_ = os.Remove(s.lockPath())
+		return "", err
+	}
+	return token, nil
+
 }
 
 func (s *Store) release(token string) error {
