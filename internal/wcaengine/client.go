@@ -111,6 +111,9 @@ func (c *Client) read() (Message, error) {
 		if e == nil {
 			e = io.ErrUnexpectedEOF
 		}
+		// Wait drains exec's stderr copier before we snapshot its diagnostics.
+		// Stdout EOF alone does not mean the final stderr write has arrived.
+		c.stop()
 		return m, fmt.Errorf("read native backend: %w; %s", e, c.log.String())
 	}
 	if e := json.Unmarshal(c.scanner.Bytes(), &m); e != nil {

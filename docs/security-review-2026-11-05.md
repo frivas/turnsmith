@@ -10,8 +10,8 @@
 
 No exploitable vulnerabilities were confirmed in the reviewed paths. There
 are two dependency advisories outside the imported packages and one group of
-18 Staticcheck maintenance diagnostics. These remain open; this review does
-not change application code or dependencies.
+18 Staticcheck maintenance diagnostics. These remain open. The security review
+did not change dependencies. A subsequent CI reliability fix is recorded below.
 
 ## Scope and tools
 
@@ -121,6 +121,24 @@ The manual review focused on the boundaries exposed by this local CLI:
   practice storage. Its optional Python dependencies are documentation tools,
   separate from the shipped Go applications; they were not covered by the Go
   vulnerability scan.
+
+## CI reliability follow-up
+
+The first macOS CI attempt on the documentation commit failed
+`TestNativeRejectsMalformedResponses/child-failure` because the child's final
+stderr text was missing from the returned error. The same attempt passed on
+Windows and Linux, and the macOS retry passed. The test exposed a race in error
+reporting: stdout EOF can arrive before Go's stderr copier finishes.
+
+The follow-up fix calls the existing process shutdown and wait routine before
+snapshotting stderr on a failed protocol read. A new regression test holds
+stderr delivery behind a channel. It fails on the previous code, then passes
+with the fix. The test retains the real subprocess and Go's stderr copier.
+
+Validation of the fix passed the complete uncached Go suite, the short race
+suite, `go vet ./...`, formatting, Staticcheck on `./internal/wcaengine`, and
+20 repetitions of the complete companion-process test suite. The 18 existing
+project-wide Staticcheck diagnostics are separate from this fix.
 
 ## Secrets scan and limits
 

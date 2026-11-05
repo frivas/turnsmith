@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Preserve the native 4×4 companion's final error output before reporting a failed
+  protocol read. Waiting for stderr collection also fixes an intermittent macOS
+  CI failure; a regression test holds back stderr delivery to exercise the race.
+
 ## 0.3.0 - 2026-10-31
 
 - Default practice now uses WCA-style state sampling: 2x2 excludes states closer than four moves, 3x3/4x4 exclude states closer than two. Unseeded generation uses fresh cryptographic words; explicit seeds are labeled reproducible seeded practice.

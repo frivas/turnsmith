@@ -10,8 +10,10 @@ import (
 	"github.com/frivas/turnsmith/internal/random"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 )
@@ -200,6 +202,71 @@ func TestNativeRejectsMalformedResponses(t *testing.T) {
 				t.Fatal("unbounded read", e)
 			}
 		})
+	}
+}
+
+type heldStderr struct {
+	log     *cappedLog
+	started chan struct{}
+	release chan struct{}
+}
+
+func (w *heldStderr) Write(p []byte) (int, error) {
+	select {
+	case <-w.started:
+	default:
+		close(w.started)
+	}
+	<-w.release
+	return w.log.Write(p)
+}
+
+func TestNativeReadFailureWaitsForStderr(t *testing.T) {
+	c, _ := brokerClient(t, "child-failure")
+	c.log = &cappedLog{}
+	stderr := &heldStderr{log: c.log, started: make(chan struct{}), release: make(chan struct{})}
+	var releaseOnce sync.Once
+	release := func() { releaseOnce.Do(func() { close(stderr.release) }) }
+	// Release the copier before brokerClient's cleanup waits for the child.
+	t.Cleanup(release)
+	c.cmd = exec.Command(c.path, "--stdio")
+	c.cmd.Stderr = stderr
+	output, err := c.cmd.StdoutPipe()
+	if err != nil {
+		t.Fatal(err)
+	}
+	c.scanner = bufio.NewScanner(output)
+	if err := c.cmd.Start(); err != nil {
+		c.cmd = nil
+		t.Fatal(err)
+	}
+	select {
+	case <-stderr.started:
+	case <-time.After(3 * time.Second):
+		t.Fatal("child did not write stderr")
+	}
+	done := make(chan error, 1)
+	finished := make(chan struct{})
+	go func() {
+		defer close(finished)
+		_, err := c.read()
+		done <- err
+	}()
+	t.Cleanup(func() { release(); <-finished })
+	select {
+	case err := <-done:
+		t.Fatalf("read returned before stderr was collected: %v", err)
+	case <-time.After(100 * time.Millisecond):
+	}
+	// The pipe now has EOF, but the stderr copier still has its final write.
+	release()
+	select {
+	case err := <-done:
+		if !errors.Is(err, io.ErrUnexpectedEOF) || !strings.Contains(err.Error(), "fixture child failure") {
+			t.Fatalf("missing child failure evidence: %v", err)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("read did not finish after stderr was released")
 	}
 }
 func TestNativeCancellationKillsBlockedIO(t *testing.T) {
