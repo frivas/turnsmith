@@ -508,7 +508,7 @@ include their native code and need no runtime downloads.
 To refresh the README images, see [screenshot capture instructions](docs/screenshots/README.md).
 
 The [2026-11-05 security review](docs/security-review-2026-11-05.md) records the
-Go vulnerability scan, static analysis, tests, and remaining maintenance findings.
+Go vulnerability scan, static analysis, tests, and resolution of the findings.
 
 See [architecture](docs/architecture.md), [adding a puzzle](docs/adding-a-puzzle.md),
 and [releasing](docs/releasing.md). Cloud accounts, telemetry, Bluetooth hardware,

@@ -52,13 +52,6 @@ func newFullCubeRandomContext(ctx context.Context, r random.Source) (*FullCube, 
 	}
 	return c, nil
 }
-func newFullCubeMoves(moves []int) *FullCube {
-	c := newFullCube()
-	for _, m := range moves {
-		c.doMove(m)
-	}
-	return c
-}
 func newFullCubeFacelets(f []int) *FullCube {
 	c := newFullCube()
 	for i := 0; i < 24; i++ {
@@ -113,20 +106,6 @@ func (c *FullCube) facelets() [96]int {
 	var ret [96]int
 	c.toFacelet(ret[:])
 	return ret
-}
-func (c *FullCube) toString() string {
-	f := c.facelets()
-	var b strings.Builder
-	for i, v := range f {
-		b.WriteByte("URFDLB"[v])
-		if i%4 == 3 {
-			b.WriteByte('\n')
-		}
-		if i%16 == 15 {
-			b.WriteByte('\n')
-		}
-	}
-	return b.String()
 }
 func (c *FullCube) copy(other *FullCube) {
 	c.edge.copy(other.edge)

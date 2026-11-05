@@ -27,8 +27,7 @@ func (c *CenterCube) fill333Facelet(facelet []byte) {
 		facelet[4+i*9] = "URFDLB"[c.ct[idx]]
 	}
 }
-func newCenterCubeCopy(other *CenterCube) *CenterCube { c := &CenterCube{}; c.copy(other); return c }
-func (c *CenterCube) copy(other *CenterCube)          { c.ct = other.ct }
+func (c *CenterCube) copy(other *CenterCube) { c.ct = other.ct }
 func newCenterCubeRandom(r random.Source) *CenterCube {
 	c := newCenterCube()
 	for i := 0; i < 23; i++ {

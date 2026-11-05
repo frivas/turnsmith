@@ -35,8 +35,7 @@ func (c *EdgeCube) checkEdge() bool {
 	ck &= ck >> 12
 	return ck == 0 && !p
 }
-func newEdgeCubeCopy(other *EdgeCube) *EdgeCube { c := &EdgeCube{}; c.copy(other); return c }
-func (c *EdgeCube) copy(other *EdgeCube)        { c.ep = other.ep }
+func (c *EdgeCube) copy(other *EdgeCube) { c.ep = other.ep }
 func newEdgeCubeRandom(r random.Source) *EdgeCube {
 	c := newEdgeCube()
 	for i := 0; i < 23; i++ {

@@ -205,22 +205,45 @@ func TestPaintStylesControlsAndClipping(t *testing.T) {
 		t.Fatal("reset not applied")
 	}
 	for x, want := range "ABCDE" {
-		got, _, _, _ := s.GetContent(x, 0)
-		if got != want {
+		got, _, _ := s.Get(x, 0)
+		if got != string(want) {
 			t.Errorf("%d: %q", x, got)
 		}
 	}
-	got, combining, _, width := s.GetContent(0, 1)
-	if got != '界' || width != 2 || len(combining) != 1 || combining[0] != '\u0301' {
-		t.Fatalf("wide grapheme: %q %q %d", got, combining, width)
+	got, _, width := s.Get(0, 1)
+	if got != "界\u0301" || width != 2 {
+		t.Fatalf("wide grapheme: %q %d", got, width)
 	}
-	got, _, _, _ = s.GetContent(2, 1)
-	if got != 'Z' {
+	got, _, _ = s.Get(2, 1)
+	if got != "Z" {
 		t.Fatal(got)
 	}
 }
 
 func contentStyle(s tcell.Screen, x, y int) tcell.Style {
-	_, _, style, _ := s.GetContent(x, y)
+	_, style, _ := s.Get(x, y)
 	return style
+}
+
+func TestPaintCombiningAcrossStyleChanges(t *testing.T) {
+	for _, base := range []string{"A", "界"} {
+		t.Run(base, func(t *testing.T) {
+			s := tcell.NewSimulationScreen("UTF-8")
+			if err := s.Init(); err != nil {
+				t.Fatal(err)
+			}
+			defer s.Fini()
+			s.SetSize(8, 1)
+			paint(s, base+"\x1b[31m\u0301Z", 8, 1)
+			got, style, width := s.Get(0, 0)
+			if got != base+"\u0301" || style != tcell.StyleDefault {
+				t.Fatalf("combining mark changed the preceding cell: %q %v", got, style)
+			}
+			got, style, _ = s.Get(width, 0)
+			fg, _, _ := style.Decompose()
+			if got != "Z" || fg != tcell.PaletteColor(1) {
+				t.Fatalf("following character has wrong position or color: %q %v", got, fg)
+			}
+		})
+	}
 }

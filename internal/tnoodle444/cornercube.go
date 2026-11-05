@@ -24,7 +24,6 @@ func newCornerCubeCoords(cperm, twist int) *CornerCube {
 	c.setTwist(twist)
 	return c
 }
-func newCornerCubeCopy(other *CornerCube) *CornerCube { c := newCornerCube(); c.copy(other); return c }
 func newCornerCubeRandom(r random.Source) *CornerCube {
 	return newCornerCubeCoords(int(random.Below(r, 40320)), int(random.Below(r, 2187)))
 }

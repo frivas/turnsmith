@@ -285,7 +285,6 @@ func (m *trainModel) handle(event terminal.Event) (terminal.Frame, error) {
 	if tooSmall && (!active || !safeKey) {
 		return terminal.Frame{Text: smallText + m.message}, nil
 	}
-	pages := trainPages(alg.Tokens(m.setup), max(8, event.Width-24))
 	m.setupPage = min(m.setupPage, m.pageCount(event.Width)-1)
 	now := event.At
 	if now.IsZero() {
@@ -356,7 +355,7 @@ func (m *trainModel) handle(event terminal.Event) (terminal.Frame, error) {
 	if tooSmall {
 		return terminal.Frame{Text: smallText + m.message}, nil
 	}
-	pages = trainPages(alg.Tokens(m.setup), max(8, event.Width-24))
+	pages := trainPages(alg.Tokens(m.setup), max(8, event.Width-24))
 	m.setupPage = min(m.setupPage, m.pageCount(event.Width)-1)
 	elapsed := m.elapsed
 	if !m.started.IsZero() {

@@ -4,8 +4,6 @@
 // d01a947d9f028f38085cda9b0507a9cf3d3f38a8 (cs.threephase). See COPYING for the GNU GPL terms.
 package tnoodle444
 
-import "strings"
-
 var Cnk [25][25]int
 var fact [13]int
 
@@ -71,16 +69,6 @@ func utilTomove(s string) []int {
 	}
 	return ret
 }
-func utilTostr(moves []int) string {
-	var b strings.Builder
-	for _, m := range moves {
-		b.WriteString(move2str[m])
-		b.WriteByte(' ')
-	}
-	return b.String()
-}
-func tomove(s string) []int    { return utilTomove(s) }
-func tostr(moves []int) string { return utilTostr(moves) }
 func swap(arr []int, a, b, c, d, key int) {
 	switch key {
 	case 0:

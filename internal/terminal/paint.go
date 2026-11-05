@@ -50,8 +50,8 @@ func paint(screen tcell.Screen, text string, width, height int) {
 			cellWidth := graphemes.Width()
 			if cellWidth == 0 {
 				if lastX >= 0 && lastY == y {
-					primary, combining, previousStyle, _ := screen.GetContent(lastX, y)
-					screen.SetContent(lastX, y, primary, append(combining, runes...), previousStyle)
+					previous, previousStyle, _ := screen.Get(lastX, y)
+					screen.Put(lastX, y, previous+string(runes), previousStyle)
 				}
 				continue
 			}

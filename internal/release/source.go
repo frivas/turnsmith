@@ -127,7 +127,7 @@ func extractSourceTreeModes(reader io.Reader, root string, executable map[string
 			if e = os.MkdirAll(target, 0755); e != nil {
 				return e
 			}
-		case tar.TypeReg, tar.TypeRegA:
+		case tar.TypeReg:
 			if e = os.MkdirAll(filepath.Dir(target), 0755); e != nil {
 				return e
 			}

@@ -6,14 +6,45 @@
 | High | 0 |
 | Medium | 0 |
 | Low | 0 |
-| Informational | 3 |
+| Informational | 0 open, 3 resolved |
 
-No exploitable vulnerabilities were confirmed in the reviewed paths. There
-are two dependency advisories outside the imported packages and one group of
-18 Staticcheck maintenance diagnostics. These remain open. The security review
-did not change dependencies. A subsequent CI reliability fix is recorded below.
+No exploitable vulnerabilities were confirmed in the reviewed paths. The two
+dependency advisories and all 18 Staticcheck diagnostics found during the
+initial review are now resolved. The original findings and the CI reliability
+fix are recorded below for reference.
 
-## Scope and tools
+## Resolution verification
+
+The follow-up changes are based on commit
+`29f61a0ffebf8e6af5abe1bf82a1dd2ffdb8c74c`.
+`golang.org/x/text` is now pinned to v0.41.0. Staticcheck reports no diagnostics,
+and both vulnerability scans report no vulnerabilities, including the stricter
+module scan that checks unused required packages.
+
+| Check | Result after fixes |
+| --- | --- |
+| `govulncheck -C cmd/turnsmith -scan module` | Passed; no known vulnerabilities in required modules |
+| `govulncheck -test ./...` | Passed; no reachable known vulnerabilities in app or test code |
+| `staticcheck ./...` | Passed; zero diagnostics, no suppressions added |
+| `go test -count=1 ./...` | Passed |
+| `go test -race -short -count=1 ./...` | Passed |
+| `go vet ./...` | Passed |
+| `go mod verify` | All modules verified |
+| `go run ./scripts/check-format.go` | Passed |
+
+The cleanup removes unused solver helpers and one redundant training-page
+calculation, checks table initialization errors in the memory test, and uses
+`Screen.Get` and `Screen.Put` for terminal reads and combining marks. Terminal
+regression coverage checks that combining characters retain their position and
+style across color changes. Go's tar reader already normalizes legacy regular
+file headers, so removing the deprecated `TypeRegA` case preserves extraction
+behavior.
+
+CI now runs pinned Staticcheck v0.8.2 and govulncheck v1.9.0 in a separate
+security job. It verifies module checksums and runs both module-level and
+reachable-code scans. These checks also run before tagged release packaging.
+
+## Initial scope and tools
 
 Reviewed the working tree based on commit
 `f3cef2fabe485f33897d1896992696e3936ac27b`, with the README, screenshots, and
@@ -39,7 +70,7 @@ govulncheck 1.9.0 using `https://vuln.go.dev`.
 
 ## Dependency findings
 
-### INFO: GO-2026-6629 in an unused package
+### Resolved INFO: GO-2026-6629 in an unused package
 
 Confidence: High for the dependency version and scanner result.
 
@@ -51,10 +82,10 @@ in v0.41.0. Govulncheck found the vulnerable module version but no imported
 affected package or reachable affected symbol in this project. An attack path
 through Turnsmith was not established.
 
-Recommendation: upgrade `golang.org/x/text` to v0.41.0 or a later compatible
-version in a dependency update, then repeat the full test suite and scan.
+Resolution: upgraded `golang.org/x/text` to v0.41.0; the full test suite and
+vulnerability scans pass.
 
-### INFO: GO-2026-5970 in an unused package
+### Resolved INFO: GO-2026-5970 in an unused package
 
 Confidence: High for the dependency version and scanner result.
 
@@ -65,11 +96,11 @@ infinite loop in `golang.org/x/text/unicode/norm` on invalid UTF-8 input. It is
 fixed in v0.39.0. Govulncheck found no imported affected package or reachable
 affected symbol. An attack path through Turnsmith was not established.
 
-Recommendation: the same upgrade to at least v0.41.0 addresses both advisories.
+Resolution: the same upgrade to v0.41.0 addresses both advisories.
 
 ## Static analysis finding
 
-### INFO: 18 maintenance diagnostics
+### Resolved INFO: 18 maintenance diagnostics
 
 Confidence: High for the diagnostics; no security impact was confirmed.
 
@@ -79,13 +110,11 @@ Confidence: High for the diagnostics; no security impact was confirmed.
 | SA1019 | 6 | `internal/release/source.go:130`, `internal/terminal/paint.go:53`, and `internal/terminal/terminal_test.go:208,213,217,224`; deprecated tar constant or terminal cell access API |
 | U1000 | 10 | Unused solver helpers in `internal/tnoodle444/centercube.go:30`, `cornercube.go:27`, `edgecube.go:38`, `fullcube.go:55,117`, `moves.go:208,227`, and `util.go:74,82,83` |
 
-These diagnostics cause Staticcheck to fail. They are not a clean Staticcheck
-result and should not be presented as one. Review the solver helpers against
-the upstream port before removing them. The deprecated tar constant is used
-to accept old regular-file entries; evaluate compatibility before changing it.
-
-Recommendation: address these diagnostics in a separate maintenance change,
-with terminal and solver regression tests.
+These were the original diagnostic locations before cleanup. The unused
+helpers had no callers in the solver or tests and were removed without
+changing the active search algorithm. Deprecated APIs and unused assignments
+were corrected. The full solver and terminal tests pass, and project-wide
+Staticcheck now exits successfully with zero diagnostics.
 
 ## Input and process review
 
@@ -138,7 +167,7 @@ with the fix. The test retains the real subprocess and Go's stderr copier.
 Validation of the fix passed the complete uncached Go suite, the short race
 suite, `go vet ./...`, formatting, Staticcheck on `./internal/wcaengine`, and
 20 repetitions of the complete companion-process test suite. The 18 existing
-project-wide Staticcheck diagnostics are separate from this fix.
+project-wide Staticcheck diagnostics were resolved in the later cleanup above.
 
 ## Secrets scan and limits
 

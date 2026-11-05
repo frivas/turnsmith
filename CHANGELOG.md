@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Updated `golang.org/x/text` to v0.41.0 to resolve GO-2026-6629 and GO-2026-5970.
+- Resolved all 18 Staticcheck diagnostics and added pinned static analysis and
+  Go vulnerability scans to CI, including checks of unused required modules.
 - Preserve the native 4×4 companion's final error output before reporting a failed
   protocol read. Waiting for stderr collection also fixes an intermittent macOS
   CI failure; a regression test holds back stderr delivery to exercise the race.

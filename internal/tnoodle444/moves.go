@@ -205,10 +205,6 @@ var movesMove2str = [36]string{"U  ", "U2 ", "U' ", "R  ", "R2 ", "R' ", "F  ", 
 	"D  ", "D2 ", "D' ", "L  ", "L2 ", "L' ", "B  ", "B2 ", "B' ",
 	"Uw ", "Uw2", "Uw'", "Rw ", "Rw2", "Rw'", "Fw ", "Fw2", "Fw'",
 	"Dw ", "Dw2", "Dw'", "Lw ", "Lw2", "Lw'", "Bw ", "Bw2", "Bw'"}
-var movesMoveIstr = [36]string{"U' ", "U2 ", "U  ", "R' ", "R2 ", "R  ", "F' ", "F2 ", "F  ",
-	"D' ", "D2 ", "D  ", "L' ", "L2 ", "L  ", "B' ", "B2 ", "B  ",
-	"Uw'", "Uw2", "Uw ", "Rw'", "Rw2", "Rw ", "Fw'", "Fw2", "Fw ",
-	"Dw'", "Dw2", "Dw ", "Lw'", "Lw2", "Lw ", "Bw'", "Bw2", "Bw "}
 var movesMove2std = [29]int{Ux1, Ux2, Ux3, Rx1, Rx2, Rx3, Fx1, Fx2, Fx3,
 	Dx1, Dx2, Dx3, Lx1, Lx2, Lx3, Bx1, Bx2, Bx3,
 	ux2, rx1, rx2, rx3, fx2, dx2, lx1, lx2, lx3, bx2, eom}
@@ -224,7 +220,6 @@ var movesSkipAxis [36]int
 var movesSkipAxis2 [28]int
 var movesSkipAxis3 [20]int
 var move2str = movesMove2str[:]
-var moveIstr = movesMoveIstr[:]
 var move2std = movesMove2std[:]
 var move3std = movesMove3std[:]
 var std2move = movesStd2move[:]

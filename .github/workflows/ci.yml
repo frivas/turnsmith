@@ -10,6 +10,26 @@ permissions:
   contents: read
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache: false
+      - name: Verify dependency checksums
+        run: go mod verify
+      - name: Install pinned analysis tools
+        run: |
+          go install honnef.co/go/tools/cmd/staticcheck@v0.8.2
+          go install golang.org/x/vuln/cmd/govulncheck@v1.9.0
+      - name: Staticcheck
+        run: staticcheck ./...
+      - name: Scan all required modules
+        run: govulncheck -C cmd/turnsmith -scan module
+      - name: Scan reachable code including tests
+        run: govulncheck -test ./...
   test:
     strategy:
       fail-fast: false
