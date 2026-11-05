@@ -1,19 +1,78 @@
+<div align="center">
+
 # turnsmith
 
+### Scramble. Follow each turn. Time your solve.
+
+Offline Rubik's Cube practice in your terminal, for 2×2, 3×3 and 4×4.
+
 [![CI](https://github.com/frivas/turnsmith/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/frivas/turnsmith/actions/workflows/ci.yml?query=branch%3Amain)
+[![Release](https://img.shields.io/github/v/release/frivas/turnsmith?color=368e79)](https://github.com/frivas/turnsmith/releases/latest)
 
-Offline Rubik's Cube scrambles and terminal practice. Run `turnsmith` to print
-one competition-style 3×3×3 scramble, with no headings or extra output.
+[Get started](#quick-start) · [Install](#installation) · [Cube guide](#interactive-guide-and-supplied-sequences) · [Timer](#timer-and-sessions) · [Algorithm practice](#algorithm-practice) · [Command reference](#flags)
 
-The default `wca` method samples random states with the WCA minimum-distance
-filters for 2×2, 3×3, and 4×4. The native Go 4×4 companion `turnsmith-wca` ships
-with the main CLI. Both run offline, with no Java or runtime downloads.
-Inspect supplied algorithms, follow a colored guide, time solves in local
-sessions, and practise your own algorithm collections.
+![Turnsmith's interactive guide after applying R and U, with a colored six-face cube net and the next move highlighted](docs/screenshots/guide.png)
 
-This is practice software. A port of TNoodle's algorithm does not make Turnsmith
-an official competition scramble program. WCA competitions must use the current
-[official TNoodle release](https://www.worldcubeassociation.org/regulations/scrambles/).
+*The interactive guide, two moves into `R U R' U'`. Every sticker has a letter as well as a color.*
+
+</div>
+
+Run `turnsmith` for one competition-style 3×3 scramble. Open the guide to follow
+moves on a colored cube, time solves in local sessions, or practise your own
+algorithm collections. Everything runs offline after installation.
+
+| Scramble and inspect | Follow each turn | Build a practice routine |
+| --- | --- | --- |
+| Generate 2×2, 3×3 and 4×4 scrambles. Replay saved moves or inspect your own algorithms. | Step forward and back through a cube net. See the inverse move when you undo a turn. | Time solves, track ao5 and ao12, and repeat cases from your own collections. |
+
+> Turnsmith is practice software. Its default `wca` method samples random states
+> with WCA minimum-distance filters, but it is not an official competition
+> scramble program. Competitions must use the current
+> [official TNoodle release](https://www.worldcubeassociation.org/regulations/scrambles/).
+
+## Quick start
+
+[Install Turnsmith](#installation), then open a terminal. Hold a solved cube with
+**white on top and green facing you**.
+
+### 1. Get a scramble
+
+```sh
+turnsmith
+```
+
+The default is a competition-style 3×3 scramble, printed on one line. Select
+another cube with `--puzzle 222` or `--puzzle 444`. Default 4×4 generation needs
+the `turnsmith-wca` companion included in the release package.
+
+### 2. Follow a short algorithm
+
+```sh
+turnsmith guide --alg "R U R' U'"
+```
+
+Press **Space** or **→** for the next move, **←** to undo, and **q** to quit.
+To follow a generated scramble instead, run `turnsmith guide --seed 42`.
+
+### 3. Time a solve
+
+```sh
+turnsmith timer --session practice --inspection 15
+```
+
+Press **Space** to begin inspection, again to start the timer, and again to stop
+and save your solve. Press **n** for the next scramble.
+
+Useful commands to try next:
+
+| I want to… | Command |
+| --- | --- |
+| See the final cube state | `turnsmith --seed 42 --diagram` |
+| Print a diagram after every move | `turnsmith --method random-move --seed 42 --length 3 --steps` |
+| Save five reproducible scrambles | `turnsmith --count 5 --seed 42 --json > scrambles.json` |
+| Follow a saved scramble | `turnsmith guide --file scrambles.json --index 2` |
+| See my session results | `turnsmith sessions show practice` |
+| Find a command's options | `turnsmith help` |
 
 ## Installation
 
@@ -32,6 +91,9 @@ The v0.3.0 downloads are:
 | Linux | AMD64 | [linux_amd64.tar.gz](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_linux_amd64.tar.gz) |
 | Windows | ARM64 | [windows_arm64.zip](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_windows_arm64.zip) |
 | Windows | AMD64 | [windows_amd64.zip](https://github.com/frivas/turnsmith/releases/download/v0.3.0/turnsmith_0.3.0_windows_amd64.zip) |
+
+<details>
+<summary><strong>macOS and Linux installation</strong></summary>
 
 ### macOS and Linux
 
@@ -77,6 +139,11 @@ then open a new terminal. Verify with `turnsmith --version` and
 `turnsmith-wca --version`. The archive also includes `BACKEND-LICENSE.txt` and
 third-party notices. Retain them when redistributing the package.
 
+</details>
+
+<details>
+<summary><strong>Windows installation</strong></summary>
+
 ### Windows
 
 Download the matching ZIP and [SHA256SUMS](https://github.com/frivas/turnsmith/releases/download/v0.3.0/SHA256SUMS).
@@ -87,8 +154,13 @@ using your downloaded filename, and compare it with the matching line in
 license and notice files. Run `turnsmith --version` and `turnsmith-wca --version`
 in a new terminal.
 
+</details>
+
 macOS and Windows binaries are currently unsigned. A Homebrew tap is not
 available. See [releasing](docs/releasing.md) for the current signing status.
+
+<details>
+<summary><strong>Install with Go or build from source</strong></summary>
 
 ### Install with Go
 
@@ -121,65 +193,7 @@ Each release also attaches
 the backend's corresponding source with vendored Go dependencies for offline
 builds. Its included instructions describe the build and license.
 
-## Releases
-
-Read the [changelog](CHANGELOG.md) or browse [release downloads](https://github.com/frivas/turnsmith/releases).
-
-Push a SemVer tag such as `v0.3.0` to run native CI and automatically publish a
-GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
-and ARM64. Each package contains both executables. Each release includes version highlights,
-a commit changelog, download links, SHA-256 checksums, and backend source. Prerelease tags such as `v0.3.0-rc.1` create GitHub prereleases.
-
-The Release workflow also supports manual previews that build and upload the
-same artifacts without tagging or publishing. See [releasing](docs/releasing.md)
-for the commands, version rules, and platform signing status.
-
-## Quick start
-
-```sh
-turnsmith
-turnsmith --method random-move --length 30
-turnsmith --count 10
-turnsmith --seed 42
-turnsmith --puzzle 333 --method random-move
-turnsmith --count 5 --seed 42 --json
-turnsmith puzzles
-turnsmith puzzles --json
-turnsmith version
-turnsmith --version
-turnsmith help
-```
-
-Aliases such as `2x2`, `3x3x3`, and `4x4` select their canonical puzzle. Unsupported identifiers
-fail without substituting another puzzle. Successful text output is one sequence
-per line, single ASCII spaces, no numbering, wrapping, ANSI codes, or metadata,
-and a final newline. Batches are generated completely before output starts.
-
-## Flags
-
-| Flag | Short | Default | Allowed values |
-| --- | --- | --- | --- |
-| `--puzzle` | `-p` | `333` | `222`, `333`, `444` and their NxN/NxNxN aliases |
-| `--method` | | `wca` | `wca` for 222/333/444; legacy `random-state` for 222/333 and `random-move` for 333/444 |
-| `--length` | `-l` | Method-selected | 1–1000 for explicit `random-move`, default 25 for 333 or 40 for 444; unavailable for `wca` and `random-state` |
-| `--count` | `-n` | `1` | Decimal integer 1–10000 |
-| `--seed` | | Direct OS entropy for `wca` | Unsigned decimal 64-bit integer; selects reproducible seeded practice |
-| `--json` | | `false` | Boolean |
-| `--steps` | | `false` | Show initial and per-move cube diagrams |
-| `--diagram` | | `false` | Show only the final cube state |
-| `--color` | | `auto` | `auto`, `always`, `never`; requires diagrams |
-| `--color-depth` | | `auto` | `auto`, `16`, `256`, `truecolor` |
-| `--help` | `-h` | | Show help |
-| `--version` | | | Name and version only |
-
-Use `--flag value`, `--flag=value`, or short equivalents such as `-l 30`.
-Boolean flags accept `=true` or `=false`. Repeated flags, short-flag bundles,
-positionals, and unknown flags are rejected. `puzzles` accepts only `--json`
-and help; `version` accepts help; `help COMMAND` shows command-specific options.
-`--version` cannot be combined with other flags. A request may contain at most
-1,000,000 moves. Errors go to stderr with `error:` and no scramble output for
-invalid requests. Exit codes: 0 success, 1 runtime or output failure, 2 invalid
-input, 130 interruption. An output failure may leave already-written bytes.
+</details>
 
 ## Holding the cube and following a scramble
 
@@ -228,6 +242,9 @@ it does not change the generator or its reproducibility contract.
 
 ## Interactive guide and supplied sequences
 
+Keep one colored cube on screen as you work through generated scrambles or your
+own algorithms.
+
 ```sh
 turnsmith guide --seed 42
 turnsmith guide --alg "R U R' U'"
@@ -239,40 +256,127 @@ turnsmith guide --file scrambles.json --index 2
 cat scrambles.json | turnsmith inspect --stdin --index 2 --json
 ```
 
-The guide keeps one colored cube on screen. Right/Space/Enter advances, Left
-shows the inverse move to undo, Home resets the displayed progress, and q exits.
+| Key | Action |
+| --- | --- |
+| → / Space / Enter | Apply the next move |
+| ← | Go back and show the inverse move to undo |
+| Home | Reset the displayed progress |
+| End | Display the final state |
+| `q` | Quit |
+
 A reset or jump changes the display only. Follow the displayed physical-cube
 instructions before continuing. `inspect` accepts one quoted argument, `--alg`,
 `--file`, or stdin, including saved generation, inspection, and daily-set JSON.
 All imported moves replay from solved; arbitrary sticker layouts are unsupported.
+Interactive modes require terminal stdin and stdout; streamed inspection works
+in pipes.
 See [terminal controls and completions](docs/terminal.md).
 
-## Timer, sessions and algorithm practice
+## Timer and sessions
+
+![Turnsmith timer ready for another solve, showing a sample practice session with six solves, a best single, and an average of five](docs/screenshots/timer.png)
+
+*An example session with six sample solves. Times and averages stay on screen
+while you practise.*
 
 ```sh
 turnsmith timer --session practice --inspection 15
 turnsmith sessions show practice
-turnsmith sessions add practice --time 12.345 --penalty +2 --notes "missed AUF"
+turnsmith sessions add practice --time 12.345 --scramble "R U R' U'" --penalty +2 --notes "missed AUF"
 turnsmith sessions export --format csv --file times.csv
 turnsmith sessions import --format csv --file times.csv
-turnsmith train --file my-cases.json --mode slowest
+```
+
+| Key | Action |
+| --- | --- |
+| Space / Enter | Begin inspection, start timing, or stop and save |
+| `n` | Load the next scramble |
+| `2` / `d` / `0` | Set +2, DNF, or no penalty on the saved solve |
+| `q` | Quit; a running attempt is discarded |
+
+Timing uses key presses and a monotonic clock. It does not require key release
+support. Omit `--inspection 15` to start timing on the first press. Sessions
+report best/worst singles, ao5 and ao12, including +2 and DNF handling.
+
+Notes, editing, JSON/CSV backup and explicit recovery are available through
+`sessions --help`. Only explicit session/training commands write local practice
+data. Import/export supports Turnsmith's versioned formats; third-party timer
+exports require conversion. See [session storage and recovery](docs/sessions.md).
+
+## Algorithm practice
+
+![Turnsmith training a right-trigger case, with its inverse setup, colored cube, revealed algorithm hint, and practice controls](docs/screenshots/training.png)
+
+*The example collection below, with its algorithm revealed by pressing `h`.*
+
+Save this as `my-cases.json`:
+
+```json
+{
+  "schema_version": 1,
+  "name": "My practice cases",
+  "cases": [
+    {"id": "right-trigger", "name": "Right trigger", "puzzle": "333", "algorithm": "R U R' U'"}
+  ]
+}
+```
+
+```sh
+turnsmith train --file my-cases.json --mode sequential
+```
+
+Follow the inverse setup from solved, then press **Space** to start and stop.
+Press **y** to record success or **d** for an unsuccessful attempt. **h** reveals
+the algorithm; **l**, **k**, and **0** mark the case learning, known, or new.
+
+Training uses your own collections. Each case has an inverse setup, hint reveal,
+and timed repetitions. Select cases with `balanced`, `learning`, `slowest`, or
+`sequential`. See [training format and controls](docs/training.md).
+
+### Make a daily set
+
+```sh
 turnsmith daily --date 2026-10-31 --name weekend --count 10 --output weekend.json
 turnsmith guide --file weekend.json --index 1
 ```
 
-Timing uses Space/Enter presses and a monotonic clock. It does not require key
-release support. `2`, `d`, and `0` edit a saved solve's penalty. Sessions report
-best/worst singles, ao5 and ao12, including +2 and DNF handling. Notes, editing,
-JSON/CSV backup and explicit recovery are available through `sessions --help`.
-Interactive modes require terminal stdin and stdout; streamed inspection works
-in pipes. Only explicit session/training commands write local practice data.
+Save a reproducible set to work through or share. The file keeps the moves so
+you can replay them after generator changes. See [daily practice sets](docs/daily-practice.md).
 
-Training cases are your own JSON collection. Each case has an inverse setup,
-hint reveal, timed repetitions, new/learning/known status and balanced, learning,
-slowest or sequential selection. See [training format and controls](docs/training.md),
-[session storage and recovery](docs/sessions.md), and
-[daily practice sets](docs/daily-practice.md). Import/export supports Turnsmith's
-versioned formats; third-party timer exports require conversion.
+## Flags
+
+These flags apply to ordinary scramble generation. Run `turnsmith help COMMAND`
+for guide, timer, training, and session options.
+
+| Flag | Short | Default | Allowed values |
+| --- | --- | --- | --- |
+| `--puzzle` | `-p` | `333` | `222`, `333`, `444` and their NxN/NxNxN aliases |
+| `--method` | | `wca` | `wca` for 222/333/444; legacy `random-state` for 222/333 and `random-move` for 333/444 |
+| `--length` | `-l` | Method-selected | 1–1000 for explicit `random-move`, default 25 for 333 or 40 for 444; unavailable for `wca` and `random-state` |
+| `--count` | `-n` | `1` | Decimal integer 1–10000 |
+| `--seed` | | Direct OS entropy for `wca` | Unsigned decimal 64-bit integer; selects reproducible seeded practice |
+| `--json` | | `false` | Boolean |
+| `--steps` | | `false` | Show initial and per-move cube diagrams |
+| `--diagram` | | `false` | Show only the final cube state |
+| `--color` | | `auto` | `auto`, `always`, `never`; requires diagrams |
+| `--color-depth` | | `auto` | `auto`, `16`, `256`, `truecolor` |
+| `--help` | `-h` | | Show help |
+| `--version` | | | Name and version only |
+
+Use `--flag value`, `--flag=value`, or short equivalents such as `-l 30`.
+Boolean flags accept `=true` or `=false`. Repeated flags, short-flag bundles,
+positionals, and unknown flags are rejected. `puzzles` accepts only `--json`
+and help; `version` accepts help; `help COMMAND` shows command-specific options.
+`--version` cannot be combined with other flags. A request may contain at most
+1,000,000 moves. Errors go to stderr with `error:` and no scramble output for
+invalid requests. Exit codes: 0 success, 1 runtime or output failure, 2 invalid
+input, 130 interruption. An output failure may leave already-written bytes.
+
+Aliases such as `2x2`, `3x3x3`, and `4x4` select their canonical puzzle.
+Unsupported identifiers fail without substituting another puzzle. Successful
+text output is one sequence per line, single ASCII spaces, no numbering,
+wrapping, ANSI codes, or metadata, and a final newline. Batches are generated
+completely before output starts.
 
 ## Competition-style defaults and legacy methods
 
@@ -371,6 +475,19 @@ legacy random-move request with `--length 3 --seed 42`:
 }
 ```
 
+## Releases
+
+Read the [changelog](CHANGELOG.md) or browse [release downloads](https://github.com/frivas/turnsmith/releases).
+
+Push a SemVer tag such as `v0.3.0` to run native CI and automatically publish a
+GitHub release with six compiled packages: macOS, Linux, and Windows on AMD64
+and ARM64. Each package contains both executables. Each release includes version highlights,
+a commit changelog, download links, SHA-256 checksums, and backend source. Prerelease tags such as `v0.3.0-rc.1` create GitHub prereleases.
+
+The Release workflow also supports manual previews that build and upload the
+same artifacts without tagging or publishing. See [releasing](docs/releasing.md)
+for the commands, version rules, and platform signing status.
+
 ## Development and contributing
 
 ```sh
@@ -387,6 +504,11 @@ an algorithm-version decision. CI runs integration tests on macOS, Linux, and
 Windows, with race and short fuzz checks on Linux. Benchmarks have no hardware
 thresholds. Building from source downloads the pinned Go modules. Release binaries
 include their native code and need no runtime downloads.
+
+To refresh the README images, see [screenshot capture instructions](docs/screenshots/README.md).
+
+The [2026-11-05 security review](docs/security-review-2026-11-05.md) records the
+Go vulnerability scan, static analysis, tests, and remaining maintenance findings.
 
 See [architecture](docs/architecture.md), [adding a puzzle](docs/adding-a-puzzle.md),
 and [releasing](docs/releasing.md). Cloud accounts, telemetry, Bluetooth hardware,
