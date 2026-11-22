@@ -515,6 +515,12 @@ and [releasing](docs/releasing.md). Cloud accounts, telemetry, Bluetooth hardwar
 curated third-party training datasets and 3D graphics are outside this release.
 Implementation packages are internal; there is no stable public Go API.
 
+## Author
+
+**Francisco Rivas** · [Portfolio](https://portfolio.probablysmart.com) · [LinkedIn](https://www.linkedin.com/in/franciscojrivash/) · [GitHub](https://github.com/frivas)
+
+<a href="https://chapa.thecreativetoken.com/u/frivas"><img src="https://chapa.thecreativetoken.com/u/frivas/badge.svg" alt="Chapa developer impact badge for Francisco Rivas" width="420"></a>
+
 ## License and attribution
 
 Turnsmith's original CLI code is [MIT licensed](LICENSE), copyright Francisco
